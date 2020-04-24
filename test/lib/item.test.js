@@ -15,5 +15,16 @@ describe("Item", () => {
   it("cannot contain anything by default", () => {
     let item = new Item();
     assume(item.canContain()).is.false();
-  })
+  });
+
+  it("contents are undefined by default", () => {
+    let item = new Item();
+    assume(item.contents).equals(undefined);
+  });
+
+  it("can contain things if it is a container", () => {
+    let item = new Item();
+    item._isContainer = true;
+    assume(item.canContain(new Item())).is.true();
+  });
 });
