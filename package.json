@@ -1,0 +1,26 @@
+{
+  "name": "facetjs",
+  "version": "0.0.1",
+  "description": "An implementation of the FacetMUD Project in JavaScript",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "mocha --recursive \"test/**/*.test.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/facet-mud-project/facetjs.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/facet-mud-project/facetjs/issues"
+  },
+  "homepage": "https://gitlab.com/facet-mud-project/facetjs#readme",
+  "devDependencies": {
+    "assume": "^2.2.0",
+    "mocha": "^7.1.1"
+  }
+}
