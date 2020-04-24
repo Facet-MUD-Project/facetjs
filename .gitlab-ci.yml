@@ -8,3 +8,8 @@ test:
   script:
     - npm i
     - npm test
+
+lint:
+  script:
+    - npm i
+    - npm lint
