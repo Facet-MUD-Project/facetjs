@@ -1,5 +1,5 @@
 const assume = require('assume');
-const Item = require('../../lib/item');
+const Item = require('../../lib/base/item');
 
 describe('Item', () => {
   let item;
