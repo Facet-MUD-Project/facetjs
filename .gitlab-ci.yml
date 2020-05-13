@@ -7,7 +7,10 @@ cache:
 test:
   script:
     - npm i
-    - npm run test
+    - npm test
+  artifacts:
+    reports:
+      cobertura: coverage/cobertura-coverage.xml
 
 lint:
   script:
