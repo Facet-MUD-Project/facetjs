@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "test": "nyc mocha --recursive \"test/**/*.test.js\""
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -39,5 +39,9 @@
       "lcov",
       "text"
     ]
+  },
+  "mocha": {
+    "recursive": true,
+    "spec": "test/**/*.test.js"
   }
 }
