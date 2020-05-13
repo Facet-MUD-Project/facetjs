@@ -33,6 +33,6 @@
   "nyc": {
     "all": true,
     "include": "lib/**",
-    "reporter": ["cobertura", "lcov", "text"]
+    "reporter": ["cobertura", "lcov", "text-summary"]
   }
 }

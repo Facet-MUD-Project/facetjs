@@ -8,6 +8,7 @@ test:
   script:
     - npm i
     - npm test
+  coverage: 'Statements.*?(\d+(?:\.\d+)?)%'
   artifacts:
     reports:
       cobertura: coverage/cobertura-coverage.xml
