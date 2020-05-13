@@ -26,13 +26,18 @@
     "eslint": "^6.8.0",
     "eslint-config-godaddy": "^4.0.0",
     "eslint-plugin-json": "^2.1.1",
-    "eslint-plugin-mocha": "^6.3.0",
+    "eslint-plugin-mocha": "^5.3.0",
     "mocha": "^7.1.1",
-    "nyc": "^15.0.1"
+    "nyc": "^15.0.1",
+    "sinon": "^9.0.2"
   },
   "nyc": {
     "all": true,
     "include": "src/**",
-    "reporter": ["cobertura", "lcov", "text"]
+    "reporter": [
+      "cobertura",
+      "lcov",
+      "text"
+    ]
   }
 }
