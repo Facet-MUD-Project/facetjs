@@ -4,7 +4,7 @@ const path = require('path');
 const Player = require('./base/player');
 
 class Server {
-  constructor(address = '::', port = 8000) {
+  constructor({ address = '::', port = 8000 } = {}) {
     this.address = address;
     this.port = port;
     this._server = null;
@@ -12,7 +12,7 @@ class Server {
     this._players = [];
   }
 
-  async readMOTD() {
+  readMOTD() {
     fs.readFile(path.join(__dirname, '..', 'MOTD'), (err, data) => {
       if (err) {
         console.error(err);
@@ -23,7 +23,7 @@ class Server {
   }
 
   async startServer() {
-    await this.readMOTD();
+    this.readMOTD();
     this._server = net.createServer((conn) => this.onConnect(conn));
     this._server.listen(this.port, this.address);
     console.info('[info] Server started on ' + this.address + ':' + this.port);

@@ -11,7 +11,7 @@ describe('Server', () => {
   let server;
 
   beforeEach(() => {
-    server = new Server();
+    server = new Server({ port: 0 });
   });
 
   it('sends data to all players on broadcast', () => {
