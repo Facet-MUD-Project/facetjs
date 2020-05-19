@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+require('make-promises-safe');
 const Server = require('./lib/server');
 
 const server = new Server();
