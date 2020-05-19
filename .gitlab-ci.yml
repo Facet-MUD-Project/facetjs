@@ -7,7 +7,11 @@ cache:
 test:
   script:
     - npm i
-    - npm run test
+    - npm test
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      cobertura: coverage/cobertura-coverage.xml
 
 lint:
   script:
