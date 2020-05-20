@@ -1,5 +1,11 @@
 const Container = require('./container');
 
+/**
+ * A class representing a living being
+ *
+ * @augments Container
+ * @property {number} level - The experience level of this living being
+ */
 class Living extends Container {
   constructor() {
     super();

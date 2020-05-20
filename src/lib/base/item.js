@@ -1,6 +1,11 @@
 const Container = require('./container');
 const ObjectType = require('./enums');
 
+/**
+ * A class representing an item
+ *
+ * @augments Container
+ */
 class Item extends Container {
   constructor() {
     super();
