@@ -24,13 +24,13 @@ class Player extends Living {
   }
 
   receiveData(data) {
-    console.debug('[debug] Received data from ' + this.remoteAddress + ': ' + data);
+    console.debug('[debug] Received data from ' + this.remoteAddress + ': ' + data.trim());
     this._input_buffer.push(data);
   }
 
   flushOutput() {
     while (this._output_buffer.length > 0) {
-      this._socket.write(this._output_buffer.pop(0));
+      this._socket.write(this._output_buffer.shift());
     }
   }
 
