@@ -1,4 +1,5 @@
 const Living = require('./living');
+const { ObjectType } = require('./enums');
 
 class Player extends Living {
   constructor(socket = null) {
@@ -6,6 +7,7 @@ class Player extends Living {
     this._socket = socket;
     this._input_buffer = [];
     this._output_buffer = [];
+    this._objectType = ObjectType.PLAYER;
   }
 
   async sendData(data) {

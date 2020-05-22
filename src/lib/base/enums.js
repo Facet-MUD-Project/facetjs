@@ -2,7 +2,8 @@ const ObjectType = {
   UNDEFINED: 'do_not_use',
   ROOM: 'room',
   NPC: 'npc',
-  ITEM: 'item'
+  ITEM: 'item',
+  PLAYER: 'player'
 };
 
 const GameState = {

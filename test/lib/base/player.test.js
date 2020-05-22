@@ -1,4 +1,5 @@
 const assume = require('assume');
+const { ObjectType } = require('../../../src/lib/base/enums');
 const Player = require('../../../src/lib/base/player');
 const sinon = require('sinon');
 
@@ -15,6 +16,9 @@ describe('Player', () => {
     });
   });
 
+  it('has an object type of player', () => {
+    assume(player._objectType).equals(ObjectType.PLAYER);
+  });
   it('buffers output when sending data', () => {
     player.sendData('foo!');
     assume(player._output_buffer).has.length(1);

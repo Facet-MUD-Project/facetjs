@@ -1,4 +1,4 @@
-const ObjectType = require('./enums');
+const { ObjectType } = require('./enums');
 
 class BaseObject {
   constructor() {
