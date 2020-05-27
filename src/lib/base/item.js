@@ -1,5 +1,5 @@
 const Container = require('./container');
-const ObjectType = require('./enums');
+const { ObjectType } = require('./enums');
 
 class Item extends Container {
   constructor() {
