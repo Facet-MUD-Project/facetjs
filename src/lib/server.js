@@ -1,6 +1,7 @@
 const fs = require('fs');
 const net = require('net');
 const path = require('path');
+const Game = require('./game');
 const Player = require('./base/player');
 
 /**
@@ -40,6 +41,8 @@ class Server {
     this.readMOTD();
     this._server = net.createServer((conn) => this.onConnect(conn));
     this._server.listen(this.port, this.address);
+    this._game = new Game();
+    setTimeout(() => this._game.gameLoop());
     console.info('[info] Server started on ' + this.address + ':' + this.port);
   }
 
@@ -50,7 +53,9 @@ class Server {
    */
   async onConnect(conn) {
     console.debug('[debug] Incoming connection from ' + conn.remoteAddress);
+    conn.setEncoding('utf-8');
     const player = new Player(conn);
+    conn.on('data', (data) => player.receiveData(data));
     await player.sendData(this.motd);
     await this.broadcast('A new player has entered the game!\r\n');
     this._players.push(player);
@@ -73,9 +78,11 @@ class Server {
    */
   async shutdown() {
     console.info('[info] Shutting down server...');
-    await this.broadcast('The server is being shut down! Goodbye.\r\n');
+    this._game.broadcast('The server is being shut down! Goodbye.\r\n');
+    this._game.shutdown();
+    this._game.gameLoop();
     await Promise.all(
-      this._players.map(async (player) => player.disconnect())
+      this._game.players.map(async (player) => player.disconnect())
     );
     this._server.close();
   }

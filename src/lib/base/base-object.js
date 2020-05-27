@@ -1,4 +1,4 @@
-const ObjectType = require('./enums');
+const { ObjectType } = require('./enums');
 
 /**
  * A class representing the most basic properties of any in-game object

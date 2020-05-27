@@ -1,5 +1,5 @@
 const Container = require('./container');
-const ObjectType = require('./enums');
+const { ObjectType } = require('./enums');
 
 /**
  * A class representing a room in the game

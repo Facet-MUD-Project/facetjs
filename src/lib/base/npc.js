@@ -1,5 +1,5 @@
 const Living = require('./living');
-const ObjectType = require('./enums');
+const { ObjectType } = require('./enums');
 
 /**
  * A class representing a non-player character
