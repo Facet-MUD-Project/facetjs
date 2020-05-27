@@ -1,6 +1,11 @@
 const Living = require('./living');
 const { ObjectType } = require('./enums');
 
+/**
+ * A class representing a player character
+ *
+ * @augments Living
+ */
 class Player extends Living {
   constructor(socket = null) {
     super();
@@ -10,6 +15,11 @@ class Player extends Living {
     this._objectType = ObjectType.PLAYER;
   }
 
+  /**
+   * Send some data to the player
+   *
+   * @param {string} data - The data to be sent
+   */
   async sendData(data) {
     this._output_buffer.push(data);
   }
@@ -36,8 +46,14 @@ class Player extends Living {
     }
   }
 
+  /**
+   * Save the player's state to a persistent data store
+   */
   async save() {}
 
+  /**
+   * Disconnect the player from the game
+   */
   async disconnect() {
     await this._socket.end();
   }

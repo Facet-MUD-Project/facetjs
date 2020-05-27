@@ -1,10 +1,16 @@
 {
   "root": true,
-  "extends": "godaddy",
+  "extends": [
+    "godaddy",
+    "plugin:jsdoc/recommended"
+  ],
   "rules": {
     "no-process-env": [
       0
     ],
     "no-console": "off"
-  }
+  },
+  "plugins": [
+    "jsdoc"
+  ]
 }
