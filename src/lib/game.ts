@@ -1,22 +1,19 @@
-const { GameState } = require('./base/enums');
+import Player from "./base/player";
+import { GameState } from "./base/enums";
 
 /**
  * A class representing the game loop and player queue
- *
- * @property {Array<Player>} players All currently connected players
  */
-class Game {
-  constructor() {
-    this._players = [];
-    this._state = GameState.RUNNING;
-  }
+export default class Game {
+  private _players: Array<Player> = [];
+  private _state: GameState = GameState.RUNNING;
 
-  addPlayer(player) {
+  addPlayer(player: Player): Game {
     this._players.push(player);
     return this;
   }
 
-  get players() {
+  get players(): Array<Player> {
     return this._players;
   }
 
@@ -29,7 +26,7 @@ class Game {
     else if (this._state === GameState.SHUTTING_DOWN) this._state = GameState.SHUTDOWN;
   }
 
-  async broadcast(msg) {
+  async broadcast(msg: string) {
     console.debug('[debug] Broadcasting message: ' + msg.trim());
     await Promise.all(
       this.players.map(async (player) => player.sendData(msg))
@@ -40,9 +37,7 @@ class Game {
     this._state = GameState.SHUTTING_DOWN;
   }
 
-  get state() {
+  get state(): GameState {
     return this._state;
   }
 }
-
-module.exports = Game;

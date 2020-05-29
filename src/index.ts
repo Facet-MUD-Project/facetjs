@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-require('make-promises-safe');
+import Server from "./lib/server";
 
-const Server = require('./lib/server');
+import('make-promises-safe');
 
 const server = new Server({
   address: process.env.FACET_MUD_ADDRESS || '::',
-  port: process.env.FACET_MUD_PORT || 8000
+  port: parseInt(process.env.FACET_MUD_PORT) || 8000
 });
 server.startServer();
 
