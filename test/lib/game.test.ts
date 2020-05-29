@@ -1,8 +1,8 @@
-const assume = require('assume');
-const FakePlayer = require('./stubs');
-const Game = require('../../src/lib/game');
-const { GameState } = require('../../src/lib/base/enums');
-const sinon = require('sinon');
+import assume from 'assume';
+import FakePlayer from './stubs';
+import Game from '../../src/lib/game';
+import { GameState } from '../../src/lib/base/enums';
+import sinon from 'sinon';
 
 describe('Game', () => {
   let game;
@@ -48,7 +48,7 @@ describe('Game', () => {
 
   it('flushes all players output buffers during game loop', () => {
     game._players = [new FakePlayer(), new FakePlayer(), new FakePlayer()];
-    game.players.forEach((player) => sinon.spy(player, 'flushOutput'));
+    game.players.forEach((player) => sinon.stub(player, 'flushOutput'));
     game.shutdown();
     game.gameLoop();
     game.players.forEach((player) => {

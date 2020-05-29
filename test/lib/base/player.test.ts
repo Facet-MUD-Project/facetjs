@@ -1,19 +1,14 @@
-const assume = require('assume');
-const { ObjectType } = require('../../../src/lib/base/enums');
-const Player = require('../../../src/lib/base/player');
-const sinon = require('sinon');
+import assume from 'assume';
+import { ObjectType } from '../../../src/lib/base/enums';
+import Player from '../../../src/lib/base/player';
+import sinon from 'sinon';
+import { Socket } from 'net';
 
 describe('Player', () => {
   let player;
 
   beforeEach(() => {
-    player = new Player({
-      write: (x) => x,
-      end: () => null,
-      address: () => {
-        return { address: '127.0.0.0', port: 8888 };
-      }
-    });
+    player = new Player(new Socket());
   });
 
   it('has an object type of player', () => {
@@ -26,7 +21,7 @@ describe('Player', () => {
   });
 
   it('calls end on its socket when disconnecting', () => {
-    sinon.spy(player._socket, 'end');
+    sinon.stub(player._socket, 'end');
     player.disconnect();
     assume(player._socket.end.calledOnce).is.true();
   });
@@ -50,7 +45,7 @@ describe('Player', () => {
     player.sendData('foo!');
     player.sendData('bar!');
     player.sendData('blah?');
-    sinon.spy(player._socket, 'write');
+    sinon.stub(player._socket, 'write');
     player.flushOutput();
     assume(player._socket.write.callCount).equals(3);
     assume(player._socket.write.firstCall.args[0]).equals('foo!');

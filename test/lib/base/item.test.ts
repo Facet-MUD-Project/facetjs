@@ -1,15 +1,15 @@
-const assume = require('assume');
-const Item = require('../../../src/lib/base/item');
+import assume from 'assume';
+import Item from '../../../src/lib/base/item';
 
 describe('Item', () => {
-  let item;
+  let item: Item;
 
   beforeEach(() => {
     item = new Item();
   });
 
   it('is not a container by default', () => {
-    assume(item._isContainer).is.false();
+    assume((item as any)._isContainer).is.false();
   });
 
   it('contentWeight is undefined by default', () => {
@@ -17,7 +17,7 @@ describe('Item', () => {
   });
 
   it('cannot contain anything by default', () => {
-    assume(item.canContain()).is.false();
+    assume(item.canContain(new Item())).is.false();
   });
 
   it('contents are undefined by default', () => {
@@ -25,7 +25,7 @@ describe('Item', () => {
   });
 
   it('can contain things if it is a container', () => {
-    item._isContainer = true;
+    (item as any)._isContainer = true;
     assume(item.canContain(new Item())).is.true();
   });
 });

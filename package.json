@@ -51,7 +51,9 @@
     ]
   },
   "mocha": {
+    "extension": ["ts"],
     "recursive": true,
-    "spec": "test/**/*.test.js"
+    "spec": "test/**/*.test.ts",
+    "require": "ts-node/register"
   }
 }
