@@ -2,15 +2,16 @@
   "name": "facetjs",
   "version": "0.0.1",
   "description": "An implementation of the FacetMUD Project in JavaScript",
-  "main": "./src/index.js",
+  "main": "./src/index.ts",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "node .",
+    "start": "ts-node .",
     "test": "nyc mocha",
-    "docs": "jsdoc -r -d docs/ -R ./README.md src/"
+    "docs": "typedoc src/",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -23,17 +24,21 @@
   },
   "homepage": "https://gitlab.com/facet-mud-project/facetjs#readme",
   "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.5",
     "assume": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-config-godaddy": "^4.0.0",
     "eslint-plugin-jsdoc": "^25.4.2",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-mocha": "^5.3.0",
-    "jsdoc": "^3.6.4",
     "make-promises-safe": "^5.1.0",
     "mocha": "^7.1.1",
     "nyc": "^15.0.1",
-    "sinon": "^9.0.2"
+    "sinon": "^9.0.2",
+    "ts-node": "^8.10.1",
+    "typedoc": "^0.17.7",
+    "typescript": "^3.9.3"
   },
   "nyc": {
     "all": true,
@@ -46,7 +51,9 @@
     ]
   },
   "mocha": {
+    "extension": ["ts"],
     "recursive": true,
-    "spec": "test/**/*.test.js"
+    "spec": "test/**/*.test.ts",
+    "require": "ts-node/register"
   }
 }

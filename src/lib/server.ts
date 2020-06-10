@@ -1,24 +1,22 @@
-const fs = require('fs');
-const net = require('net');
-const path = require('path');
-const Game = require('./game');
-const Player = require('./base/player');
+import * as fs from 'fs';
+import * as net from 'net';
+import * as path from 'path';
+import Game from './game';
+import Player from './base/player';
 
 /**
  * The socket server used to accept user connections and handle data I/O
- *
- * @property {string} address - The IP address to which the server is bound
- * @property {number} port - The port number for the server
- * @property {?string} motd - The MOTD, announced on player connect
- * @property {Array<Player>} _players - All connected players
  */
-class Server {
+export default class Server {
+  public address: string;
+  public port: number;
+  public motd: string = null;;
+  private _server: net.Server = null;
+  private _game: Game = null;
+
   constructor({ address = '::', port = 8000 } = {}) {
     this.address = address;
     this.port = port;
-    this._server = null;
-    this.motd = null;
-    this._players = [];
   }
 
   /**
@@ -30,7 +28,7 @@ class Server {
         console.error(err);
         return;
       }
-      this.motd = data;
+      this.motd = data.toString();
     });
   }
 
@@ -48,29 +46,15 @@ class Server {
 
   /**
    * Handle a new connection to the server
-   *
-   * @param {net.Socket} conn - A new TCP connection
    */
-  async onConnect(conn) {
+  async onConnect(conn: net.Socket) {
     console.debug('[debug] Incoming connection from ' + conn.remoteAddress);
     conn.setEncoding('utf-8');
     const player = new Player(conn);
-    conn.on('data', (data) => player.receiveData(data));
+    conn.on('data', (data: string) => player.receiveData(data));
     await player.sendData(this.motd);
-    await this.broadcast('A new player has entered the game!\r\n');
-    this._players.push(player);
-  }
-
-  /**
-   * Broadcast a message to all connected players
-   *
-   * @param {string} msg - The message to be broadcast
-   */
-  async broadcast(msg) {
-    console.debug('[debug] Broadcasting message: ' + msg.trim());
-    await Promise.all(
-      this._players.map(async (player) => player.sendData(msg))
-    );
+    await this._game.broadcast('A new player has entered the game!\r\n');
+    this._game.addPlayer(player);
   }
 
   /**
@@ -87,5 +71,3 @@ class Server {
     this._server.close();
   }
 }
-
-module.exports = Server;

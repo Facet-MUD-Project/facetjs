@@ -1,8 +1,8 @@
-const assume = require('assume');
-const Container = require('../../../src/lib/base/container');
+import assume from 'assume';
+import Container from '../../../src/lib/base/container';
 
 describe('Container', () => {
-  let container;
+  let container: Container;
 
   beforeEach(() => {
     container = new Container();
@@ -34,7 +34,8 @@ describe('Container', () => {
     const other1 = new Container(), other2 = new Container();
     other1.weight = 15;
     other2.weight = 27;
-    container.addObject(other1).addObject(other2);
+    container.addObject(other1);
+    container.addObject(other2);
     assume(container.contentWeight).equals(42);
   });
 });

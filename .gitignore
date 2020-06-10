@@ -86,3 +86,6 @@ typings/
 # JSDoc output
 out/
 docs/
+
+# TypeScript build output
+dist/

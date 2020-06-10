@@ -1,8 +1,8 @@
-const assume = require('assume');
-const FakePlayer = require('./stubs');
-const Game = require('../../src/lib/game');
-const Server = require('../../src/lib/server');
-const sinon = require('sinon');
+import assume from 'assume';
+import FakePlayer from './stubs';
+import Game from '../../src/lib/game';
+import Server from '../../src/lib/server';
+import sinon from 'sinon';
 
 describe('Server', () => {
   let server;
@@ -18,7 +18,7 @@ describe('Server', () => {
     server._game._players.forEach((player) => sinon.spy(player, 'disconnect'));
     sinon.stub(server._game, 'gameLoop');
     await server.shutdown();
-    server._players.forEach((player) => {
+    server._game._players.forEach((player) => {
       assume(player.disconnect.calledOnce).is.true();
     });
   });

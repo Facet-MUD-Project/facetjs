@@ -1,0 +1,19 @@
+{
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "target": "ES6",
+    "outDir": "./dist",
+    "module": "CommonJS",
+    "esModuleInterop": true
+  },
+  "typedocOptions": {
+    "out": "docs",
+    "mode": "file"
+  }
+}
