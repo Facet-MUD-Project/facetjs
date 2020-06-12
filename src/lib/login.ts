@@ -40,12 +40,14 @@ export default class Login {
       const stats = fs.lstatSync(save_path);
       if (!stats.isFile()) {
         console.error(`[error] Player save data exists, but is not a file?! (${save_path})`);
+        return false;
       }
       try {
         fs.accessSync(save_path, fs.constants.W_OK);
       }
       catch (err) {
         console.error(`[error] Player save file exists, but is not writable. (${save_path})`);
+        return false;
       }
       console.debug(`[debug] Found player save file: ${save_path}`);
       return true;
