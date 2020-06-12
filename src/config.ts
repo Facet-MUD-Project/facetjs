@@ -33,8 +33,7 @@ export default class Config {
   }
 
   resolveFsPath(dirpath: string): string {
-    // Resolve the paths relative to the top level of this project
-    dirpath = path.resolve(path.join('..', dirpath));
+    dirpath = path.resolve(path.join(dirpath));
     if (!fs.existsSync(dirpath)) fs.mkdirSync(dirpath, { recursive: true });
     else {
       const stats = fs.lstatSync(dirpath);
