@@ -51,9 +51,14 @@
     ]
   },
   "mocha": {
-    "extension": ["ts"],
+    "extension": [
+      "ts"
+    ],
     "recursive": true,
     "spec": "test/**/*.test.ts",
     "require": "ts-node/register"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5"
   }
 }
