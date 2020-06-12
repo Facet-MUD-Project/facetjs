@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
 import Server from "./lib/server";
+import Config from "./config";
 
 import('make-promises-safe');
 
+const config = Config.getInstance();
 const server = new Server({
-  address: process.env.FACET_MUD_ADDRESS || '::',
-  port: parseInt(process.env.FACET_MUD_PORT) || 8000
+  address: config.server_address,
+  port: config.server_port
 });
 server.startServer();
 
