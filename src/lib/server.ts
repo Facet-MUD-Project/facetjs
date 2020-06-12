@@ -53,6 +53,7 @@ export default class Server {
     const player = new Player(conn);
     conn.on('data', (data: string) => player.receiveData(data));
     await player.sendData(this.motd);
+    await player.sendData('What... is your name? ');
     await this._game.broadcast('A new player has entered the game!\r\n');
     this._game.addPlayer(player);
   }

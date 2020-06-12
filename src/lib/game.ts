@@ -1,10 +1,12 @@
-import Player from "./base/player";
 import { GameState } from "./base/enums";
+import Login from './login';
+import Player from "./base/player";
 
 /**
  * A class representing the game loop and player queue
  */
 export default class Game {
+  private logind: Login = new Login();
   private _players: Array<Player> = [];
   private _state: GameState = GameState.RUNNING;
 
@@ -19,7 +21,12 @@ export default class Game {
 
   async gameLoop() {
     this.players.forEach((player) => {
-      player.inputBuffer.forEach((msg) => this.broadcast(msg));
+      if (!player.loggedIn) {
+        player.inputBuffer.forEach((msg) => this.logind.handleInput(player, msg));
+      }
+      else {
+        player.inputBuffer.forEach((msg) => this.broadcast(msg));
+      }
       player.flushOutput();
     });
     if (this._state === GameState.RUNNING) setTimeout(() => this.gameLoop());
