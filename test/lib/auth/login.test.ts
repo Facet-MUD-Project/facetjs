@@ -2,13 +2,16 @@ import Config from "../../../src/config";
 import Player from "../../../src/lib/base/player";
 import Login from "../../../src/lib/auth/login";
 import assume from "assume";
+import mockedEnv from 'mocked-env';
 
 describe('Login', () => {
-  let config, logind, player;
+  let config, logind, player, restore;
 
   before(() => {
-    process.env.FACET_SAVE_DIR = './test/fixtures/save';
-    process.env.FACET_PLAYER_SAVE_DIR = './test/fixtures/save/players';
+    restore = mockedEnv({
+      FACET_SAVE_DIR: './test/fixtures/save',
+      FACET_PLAYER_SAVE_DIR: './test/fixtures/save/players'
+    });
     config = Config.getInstance();
     config.loadConfig();
     logind = new Login();
@@ -39,4 +42,8 @@ describe('Login', () => {
     const assumed = {username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42};
     assume(loaded).eqls(assumed);
   });
+
+  after(() => {
+    restore();
+  })
 })

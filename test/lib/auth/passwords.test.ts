@@ -1,9 +1,10 @@
 import Config from "../../../src/config";
 import { makePassword, checkPassword } from "../../../src/lib/auth/passwords";
 import assume from "assume";
+import mockedEnv from "mocked-env";
 
 describe('Passwords', () => {
-  let config;
+  let config, restore;
   /**
    * This is the result of a call to pbkdf2Sync with:
    *   password: super_secret_password
@@ -24,8 +25,10 @@ describe('Passwords', () => {
         config_password = 'e03adccfbb7e566092830e1a9973848a1cdd10acc50948d48677a6572c86f35e8fefe9b4a586b6d17ef15c4cfcfcd6d357bac1e844d95f4807c05b8e6e6f43c0';
 
   before(() => {
-    process.env.AUTH_HASH_ITERATIONS = '100000';
-    process.env.SECRET_KEY = 'foobar';
+    restore = mockedEnv({
+      AUTH_HASH_ITERATIONS: '100000',
+      SECRET_KEY: 'foobar'
+    });
     config = Config.getInstance();
     config.loadConfig();
   });
@@ -50,5 +53,9 @@ describe('Passwords', () => {
 
   it('are checked against the configured salt if not specified', () => {
     assume(checkPassword('super_secret_password', config_password)).is.true();
+  });
+
+  after(() => {
+    restore();
   });
 });
