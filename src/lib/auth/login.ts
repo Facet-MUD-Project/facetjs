@@ -1,8 +1,8 @@
-import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as toml from '@iarna/toml';
-import Player from "./base/player";
-import Config from '../config';
+import Player from "../base/player";
+import Config from '../../config';
+import { checkPassword } from './passwords';
 
 export default class Login {
   handleInput(player: Player, data: string) {
@@ -23,9 +23,8 @@ export default class Login {
       console.debug('[debug] Loaded player data ', player_data);
       // Trim the trailing newline
       data = data.replace(/\r?\n|\r/g, "");
-      const hashed = crypto.pbkdf2Sync(data, config.secret_key, config.auth_hash_iterations, 64, 'sha512').toString('hex');
-      if (hashed === player_data['password']) {
-        player.password = hashed;
+      if (checkPassword(data, player_data['password'])) {
+        player.password = data;
         player.sendData(`Welcome, ${player_data['display_name']}!\n`);
       }
       else {

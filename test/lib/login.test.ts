@@ -1,6 +1,6 @@
 import Config from "../../src/config";
 import Player from "../../src/lib/base/player";
-import Login from "../../src/lib/login";
+import Login from "../../src/lib/auth/login";
 import assume from "assume";
 
 describe('Login', () => {

@@ -3,6 +3,7 @@ import * as path from 'path';
 import Living from "./living";
 import { ObjectType } from './enums';
 import Config from '../../config';
+import { makePassword } from '../auth/passwords';
 
 /**
  * A class representing a player character
@@ -44,8 +45,7 @@ export default class Player extends Living {
   }
 
   set password(password: string) {
-    // TODO: Hash this with PBKDF2
-    this._password = password;
+    this._password = makePassword(password);
   }
 
   /**

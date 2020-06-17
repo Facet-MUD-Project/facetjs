@@ -1,5 +1,5 @@
 import { GameState } from "./base/enums";
-import Login from './login';
+import Login from './auth/login';
 import Player from "./base/player";
 
 /**
