@@ -8,7 +8,9 @@ describe('Game', () => {
   let game;
 
   beforeEach(() => {
-    game = new Game();
+    // @ts-ignore
+    Game.instance = null;
+    game = Game.getInstance();
   });
 
   it('sends data to all players on broadcast', () => {

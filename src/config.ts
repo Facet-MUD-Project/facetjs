@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default class Config {
-  private static instance;
+  private static instance: Config;
   // All options with their default values
   server_address: string = '::';
   server_port: number = 8000;

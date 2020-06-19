@@ -14,7 +14,7 @@ describe('Login', () => {
     });
     config = Config.getInstance();
     config.loadConfig();
-    logind = new Login();
+    logind = Login.getInstance();
   });
 
   beforeEach(() => {

@@ -6,9 +6,17 @@ import Player from "./base/player";
  * A class representing the game loop and player queue
  */
 export default class Game {
-  private logind: Login = new Login();
+  private static instance: Game;
+  private logind: Login = Login.getInstance();
   private _players: Array<Player> = [];
   private _state: GameState = GameState.RUNNING;
+
+  private constructor() {}
+
+  static getInstance(): Game {
+    if (!Game.instance) Game.instance = new Game();
+    return Game.instance;
+  }
 
   addPlayer(player: Player): Game {
     this._players.push(player);
@@ -21,12 +29,9 @@ export default class Game {
 
   async gameLoop() {
     this.players.forEach((player) => {
-      if (!player.loggedIn) {
-        player.inputBuffer.forEach((msg) => this.logind.handleInput(player, msg));
-      }
-      else {
-        player.inputBuffer.forEach((msg) => this.broadcast(msg));
-      }
+      player.inputBuffer.forEach(
+        (msg) => player.inputHandler.handleInput(player, msg)
+      );
       player.flushOutput();
     });
     if (this._state === GameState.RUNNING) setTimeout(() => this.gameLoop());

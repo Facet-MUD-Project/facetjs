@@ -9,7 +9,7 @@ describe('Server', () => {
 
   beforeEach(() => {
     server = new Server({ port: 0 });
-    server._game = new Game();
+    server._game = Game.getInstance();
   });
 
   it('disconnects all players on shutdown', async () => {
