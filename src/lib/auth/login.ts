@@ -10,7 +10,7 @@ export default class Login implements InputHandler {
 
   private constructor() {}
 
-  static getInstance() {
+  static getInstance(): Login {
     if (!Login.instance) Login.instance = new Login();
     return Login.instance;
   }
@@ -66,7 +66,7 @@ export default class Login implements InputHandler {
     return false;
   }
 
-  loadPlayer(player: Player): Object {
+  loadPlayer(player: Player): Record<string, any> {
     return toml.parse(fs.readFileSync(player.savePath).toString());
   }
 }
