@@ -3,6 +3,7 @@ import Player from "../../../src/lib/base/player";
 import Login from "../../../src/lib/auth/login";
 import assume from "assume";
 import mockedEnv from 'mocked-env';
+import sinon from 'sinon';
 
 describe('Login', () => {
   let config, logind, player, restore;
@@ -50,5 +51,44 @@ describe('Login', () => {
 
   after(() => {
     restore();
-  })
-})
+  });
+
+  describe('handleInput', () => {
+    let player;
+
+    beforeEach(() => {
+      player = new Player();
+    });
+
+    it("sets a player's username first, if not set", () => {
+      sinon.stub(logind, 'playerExists');
+      logind.handleInput(player, 'ford_prefect');
+      assume(player.username).equals('ford_prefect');
+      logind.playerExists.restore();
+    });
+
+    it('asks the user to set a password if they are new', () => {
+      sinon.stub(logind, 'playerExists');
+      sinon.stub(player, 'sendData');
+      logind.handleInput(player, 'ford_prefect');
+      assume(
+        player.sendData.secondCall.calledWithExactly(
+          'What would you like for a password? '
+        )
+      ).is.true();
+      logind.playerExists.restore();
+    });
+
+    it('greets existing players and asks for a password', () => {
+      sinon.stub(logind, 'playerExists').returns(true);
+      sinon.stub(player, 'sendData');
+      logind.handleInput(player, 'ford_prefect');
+      assume(
+        player.sendData.firstCall.calledWithExactly(
+          'Welcome back!\nWhat... is your password? '
+        )
+      ).is.true();
+      logind.playerExists.restore();
+    });
+  });
+});
