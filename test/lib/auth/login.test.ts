@@ -21,6 +21,11 @@ describe('Login', () => {
     player = new Player();
   });
 
+  it('is a singleton', () => {
+    const logind2 = Login.getInstance();
+    assume(logind).equals(logind2);
+  });
+
   it('finds existing players', () => {
     player.username = 'zaphod';
     assume(logind.playerExists(player)).is.true();
