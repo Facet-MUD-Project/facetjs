@@ -1,6 +1,6 @@
 import assume from 'assume';
 import mockedEnv from 'mocked-env';
-import Config from '../../src/config';
+import Config from '../src/config';
 
 describe('Config', () => {
   let config: Config;
