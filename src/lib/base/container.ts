@@ -59,7 +59,7 @@ export default class Container extends BaseObject {
   /**
    * Add an object to this container
    */
-  addObject(obj: BaseObject): BaseObject {
+  addObject(obj: BaseObject): Container {
     if (this.canContain(obj)) {
       if (this.contains(obj)) {
         throw new AlreadyContains(`${this} already contains ${obj}.`);
@@ -73,7 +73,7 @@ export default class Container extends BaseObject {
   /**
    * Remove an object from this container
    */
-  removeObject(obj: BaseObject): BaseObject {
+  removeObject(obj: BaseObject): Container {
     if (this.canRelease(obj)) {
       this._contents.delete(obj);
       return this;

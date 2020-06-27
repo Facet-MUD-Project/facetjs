@@ -39,7 +39,7 @@ export default class Server {
     this.readMOTD();
     this._server = net.createServer((conn) => this.onConnect(conn));
     this._server.listen(this.port, this.address);
-    this._game = new Game();
+    this._game = Game.getInstance();
     setTimeout(() => this._game.gameLoop());
     console.info('[info] Server started on ' + this.address + ':' + this.port);
   }
@@ -53,6 +53,7 @@ export default class Server {
     const player = new Player(conn);
     conn.on('data', (data: string) => player.receiveData(data));
     await player.sendData(this.motd);
+    await player.sendData('What... is your name? ');
     await this._game.broadcast('A new player has entered the game!\r\n');
     this._game.addPlayer(player);
   }
