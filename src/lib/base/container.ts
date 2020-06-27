@@ -36,10 +36,6 @@ export default class Container extends BaseObject {
    * Check whether obj can be put inside this container
    */
   canContain(obj: BaseObject): boolean {
-    // FIXME: It seems like throw/catch is not a recommended pattern in JS.
-    // See https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n
-    // Should these just return false, and we fully deprecate our exceptions?
-    // If this is the case, then `addObject` will likely need to change to return a boolean
     if (this._contents.size >= this.maxContentCount) {
       throw new CannotContain(`${this} already contains its maximum number of objects.`);
     }
@@ -67,7 +63,7 @@ export default class Container extends BaseObject {
       this._contents.add(obj);
       return this;
     }
-    throw new Error(`${this} cannot contain ${obj}.`);
+    throw new CannotContain(`${this} cannot contain ${obj}.`);
   }
 
   /**
