@@ -31,7 +31,7 @@ export default class Player extends Living {
   }
 
   get loggedIn(): boolean {
-    return (this._username !== null && this._password !== null && this.playerData !== {});
+    return (this._username !== null && this._password !== null && this.playerData !== null);
   }
 
   get inputHandler(): InputHandler {
@@ -78,7 +78,7 @@ export default class Player extends Living {
   }
 
   get displayName(): string {
-    return this._playerData['display_name'] || this.username;
+    return this.playerData ? this.playerData['display_name'] : this.username;
   }
 
   get savePath(): string {
