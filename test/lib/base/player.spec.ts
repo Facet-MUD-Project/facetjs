@@ -1,8 +1,12 @@
+// @ts-nocheck
+
 import assume from 'assume';
 import { ObjectType } from '../../../src/lib/base/enums';
 import Player from '../../../src/lib/base/player';
 import sinon from 'sinon';
 import { Socket } from 'net';
+import Login from '../../../src/lib/auth/login';
+import PlayerCreation from '../../../src/lib/auth/creation';
 
 describe('Player', () => {
   let player: Player;
@@ -54,7 +58,56 @@ describe('Player', () => {
   });
 
   it('toString returns the display name when available', () => {
-    player.playerData = {displayName: 'Ford Prefect'};
+    player.playerData = {display_name: 'Ford Prefect'};
     assume(player.toString()).equals('Ford Prefect');
   });
+
+  it('toString returns the username when the display name is not available', () => {
+    player.username = 'ford_prefect';
+    assume(player.toString()).equals('ford_prefect');
+  });
+
+  it('is not considered logged in by default', () => {
+    assume(player.loggedIn).is.false();
+  });
+
+  it('is not logged in without a password', () => {
+    player.username = 'ford_prefect';
+    assume(player.loggedIn).is.false();
+  });
+
+  it('is not logged in without player data', () => {
+    player.username = 'ford_prefect';
+    player.password = 'z@p40d_b33bl3br0x';
+    assume(player.loggedIn).is.false();
+  });
+
+  it('is logged in with username + password + player data', () => {
+    player.username = 'ford_prefect';
+    player.password = 'z@p40d_b33bl3br0x';
+    player.playerData = {display_name: 'Ford Prefect'};
+    assume(player.loggedIn).is.true();
+  });
+
+  describe('inputHandler', () => {
+    it('sends input to the login handler by default', () => {
+      assume(player.inputHandler).equals(Login.getInstance());
+    });
+
+    it('sends input to the player creation daemon if they are not logged in but have username / password', () => {
+      player.username = 'ford_prefect';
+      player.password = 'z@p40d_b33bl3br0x';
+      assume(player.inputHandler).equals(PlayerCreation.getInstance());
+    });
+  });
+
+  it("cannot have player data set once it's already set", () => {
+    player.playerData = {display_name: 'Ford Prefect'};
+    assume(() => player.playerData = {foo: 'bar'}).throws(Error);
+  });
+
+  it("cannot have the username set once it's already been set", () => {
+    player.username = 'ford_prefect';
+    assume(() => player.username = 'zaphod_beeblebrox').throws(Error);
+  })
 });
