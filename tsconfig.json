@@ -4,7 +4,7 @@
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "test/**/*.spec.ts"
   ],
   "compilerOptions": {
     "target": "ES6",

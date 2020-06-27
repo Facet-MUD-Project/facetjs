@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { Socket } from 'net';
 
 describe('Player', () => {
-  let player;
+  let player: Player;
 
   beforeEach(() => {
     player = new Player(new Socket());
@@ -51,5 +51,10 @@ describe('Player', () => {
     assume(player._socket.write.firstCall.args[0]).equals('foo!');
     assume(player._socket.write.secondCall.args[0]).equals('bar!');
     assume(player._socket.write.thirdCall.args[0]).equals('blah?');
+  });
+
+  it('toString returns the display name when available', () => {
+    player.playerData = {displayName: 'Ford Prefect'};
+    assume(player.toString()).equals('Ford Prefect');
   });
 });

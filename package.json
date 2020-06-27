@@ -56,7 +56,7 @@
       "ts"
     ],
     "recursive": true,
-    "spec": "test/**/*.test.ts",
+    "spec": "test/**/*.spec.ts",
     "require": "ts-node/register"
   },
   "dependencies": {
