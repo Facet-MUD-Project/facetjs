@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import assume from 'assume';
 import FakePlayer from './stubs';
 import Game from '../../src/lib/game';
@@ -5,7 +7,7 @@ import Server from '../../src/lib/server';
 import sinon from 'sinon';
 
 describe('Server', () => {
-  let server;
+  let server: Server;
 
   beforeEach(() => {
     server = new Server({ port: 0 });

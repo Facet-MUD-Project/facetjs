@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import assume from 'assume';
 import FakePlayer from './stubs';
 import Game from '../../src/lib/game';
@@ -6,7 +8,7 @@ import sinon from 'sinon';
 import Player from '../../src/lib/base/player';
 
 describe('Game', () => {
-  let game;
+  let game: Game;
 
   beforeEach(() => {
     // @ts-ignore

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Config from "../../../src/config";
 import Player from "../../../src/lib/base/player";
 import Login from "../../../src/lib/auth/login";
@@ -6,7 +8,7 @@ import mockedEnv from 'mocked-env';
 import sinon from 'sinon';
 
 describe('Login', () => {
-  let config, logind, player, restore;
+  let config: Config, logind: Login, player: Player, restore;
 
   before(() => {
     restore = mockedEnv({

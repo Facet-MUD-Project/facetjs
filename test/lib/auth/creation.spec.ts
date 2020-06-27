@@ -2,7 +2,7 @@ import assume from 'assume';
 import PlayerCreation from '../../../src/lib/auth/creation';
 
 describe('Player Creation', () => {
-  let creation;
+  let creation: PlayerCreation;
 
   before(() => {
     creation = PlayerCreation.getInstance();
