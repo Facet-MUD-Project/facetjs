@@ -1,13 +1,16 @@
+import * as fs from 'fs';
+import * as toml from '@iarna/toml';
 import { Socket } from 'net';
 import * as path from 'path';
+
 import Living from "./living";
 import { ObjectType } from './enums';
-import Config from '../../config';
-import { makePassword } from '../auth/passwords';
-import { InputHandler } from '../interfaces';
-import Game from '../game';
-import Login from '../auth/login';
 import PlayerCreation from '../auth/creation';
+import Login from '../auth/login';
+import { makePassword } from '../auth/passwords';
+import Game from '../game';
+import { InputHandler } from '../interfaces';
+import Config from '../../config';
 
 /**
  * A class representing a player character
@@ -31,7 +34,7 @@ export default class Player extends Living {
   }
 
   get loggedIn(): boolean {
-    return (this._username !== null && this._password !== null && this.playerData !== {});
+    return (this._username !== null && this._password !== null && this.playerData !== null);
   }
 
   get inputHandler(): InputHandler {
@@ -54,14 +57,9 @@ export default class Player extends Living {
     return this._playerData;
   }
 
-  set playerData(data: Object) {
-    if (this._playerData !== null) {
-      console.debug('[debug] Player data: ', this._playerData);
-      throw new Error('Cannot set the player data after the user is already logged in.');
-    }
-    else {
-      this._playerData = data;
-    }
+  loadData(): Player {
+    this._playerData = toml.parse(fs.readFileSync(this.savePath).toString());
+    return this;
   }
 
   set username(username: string) {
@@ -78,7 +76,7 @@ export default class Player extends Living {
   }
 
   get displayName(): string {
-    return this._playerData['display_name'] || this.username;
+    return this.playerData ? this.playerData['display_name'] : this.username;
   }
 
   get savePath(): string {
@@ -118,6 +116,28 @@ export default class Player extends Living {
     while (this._output_buffer.length > 0) {
       this._socket.write(this._output_buffer.shift());
     }
+  }
+
+  exists(): boolean {
+    const save_path = this.savePath;
+    if (fs.existsSync(save_path)) {
+      const stats = fs.lstatSync(save_path);
+      if (!stats.isFile()) {
+        console.error(`[error] Player save data exists, but is not a file?! (${save_path})`);
+        return false;
+      }
+      try {
+        fs.accessSync(save_path, fs.constants.W_OK);
+      }
+      catch (err) {
+        console.error(`[error] Player save file exists, but is not writable. (${save_path})`);
+        return false;
+      }
+      console.debug(`[debug] Found player save file: ${save_path}`);
+      return true;
+    }
+    console.debug(`[debug] Player save file does not exist: ${save_path}`);
+    return false;
   }
 
   /**

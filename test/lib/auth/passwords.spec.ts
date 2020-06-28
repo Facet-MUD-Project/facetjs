@@ -4,7 +4,7 @@ import assume from "assume";
 import mockedEnv from "mocked-env";
 
 describe('Passwords', () => {
-  let config, restore;
+  let config: Config, restore;
   /**
    * This is the result of a call to pbkdf2Sync with:
    *   password: super_secret_password
