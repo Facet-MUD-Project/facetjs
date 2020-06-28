@@ -1,7 +1,4 @@
-import * as fs from 'fs';
-import * as toml from '@iarna/toml';
 import Player from "../base/player";
-import Config from '../../config';
 import { checkPassword } from './passwords';
 import { InputHandler } from '../interfaces';
 
