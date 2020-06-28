@@ -1,5 +1,5 @@
 {
-  "name": "facetjs",
+  "name": "facetmud",
   "version": "0.0.1",
   "description": "An implementation of the FacetMUD Project in JavaScript",
   "main": "./src/index.ts",
