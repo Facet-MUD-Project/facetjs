@@ -7,9 +7,8 @@ import Player from "./base/player";
  */
 export default class Game {
   private static instance: Game;
-  private logind: Login = Login.getInstance();
   private _players: Array<Player> = [];
-  private _state: GameState = GameState.RUNNING;
+  private _state: GameState = GameState.STARTING;
 
   private constructor() {}
 
@@ -43,6 +42,11 @@ export default class Game {
     await Promise.all(
       this.players.map(async (player) => player.sendData(msg))
     );
+  }
+
+  async startUp() {
+    this._state = GameState.RUNNING;
+    this.gameLoop();
   }
 
   shutdown() {
