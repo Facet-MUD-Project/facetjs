@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import assume from 'assume';
-import FakePlayer from './stubs';
 import Game from '../../src/lib/game';
 import { GameState } from '../../src/lib/base/enums';
 import sinon from 'sinon';
@@ -22,8 +21,13 @@ describe('Game', () => {
   });
 
   it('sends data to all players on broadcast', () => {
-    game._players = [new FakePlayer(), new FakePlayer(), new FakePlayer()];
-    game.players.forEach((player) => sinon.spy(player, 'sendData'));
+    game._players = [new Player(), new Player(), new Player()];
+    game.players.forEach(
+      (player) => {
+        sinon.stub(player, 'sendData');
+        sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
+      }
+    );
     game.broadcast('Foo bar!');
     game.players.forEach((player) => {
       assume(player.sendData.calledOnce).is.true();
@@ -31,9 +35,23 @@ describe('Game', () => {
     });
   });
 
-  it('defaults to running state', () => {
-    assume(game.state).equals(GameState.RUNNING);
+  it('defaults to starting state', () => {
+    assume(game.state).equals(GameState.STARTING);
   });
+
+  it('changes to running state after starting up', () => {
+    sinon.stub(game, 'gameLoop');
+    game.startUp();
+    assume(game.state).equals(GameState.RUNNING);
+    game.gameLoop.restore();
+  });
+
+  it('starts the game loop when starting up', () => {
+    sinon.stub(game, 'gameLoop');
+    game.startUp();
+    assume(game.gameLoop.calledOnce).is.true();
+    game.gameLoop.restore();
+  })
 
   it('changes state to shutting down when shutdown is called', () => {
     game.shutdown();
@@ -41,8 +59,8 @@ describe('Game', () => {
   });
 
   it('adds to the player list when addPlayer is called', () => {
-    const player1 = new FakePlayer();
-    const player2 = new FakePlayer();
+    const player1 = new Player();
+    const player2 = new Player();
     game.addPlayer(player1);
     game.addPlayer(player2);
     assume(game.players).has.length(2);
@@ -57,8 +75,13 @@ describe('Game', () => {
   });
 
   it('flushes all players output buffers during game loop', () => {
-    game._players = [new FakePlayer(), new FakePlayer(), new FakePlayer()];
-    game.players.forEach((player) => sinon.stub(player, 'flushOutput'));
+    game._players = [new Player(), new Player(), new Player()];
+    game.players.forEach(
+      (player) => {
+        sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
+        sinon.stub(player, 'flushOutput');
+      }
+    );
     game.shutdown();
     game.gameLoop();
     game.players.forEach((player) => {
