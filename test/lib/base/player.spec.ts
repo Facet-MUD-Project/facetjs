@@ -1,18 +1,31 @@
 // @ts-nocheck
 
 import assume from 'assume';
+import mockedEnv from 'mocked-env';
+import { Socket } from 'net';
+import sinon from 'sinon';
+
+import PlayerCreation from '../../../src/lib/auth/creation';
+import Login from '../../../src/lib/auth/login';
 import { ObjectType } from '../../../src/lib/base/enums';
 import Player from '../../../src/lib/base/player';
-import sinon from 'sinon';
-import { Socket } from 'net';
-import Login from '../../../src/lib/auth/login';
-import PlayerCreation from '../../../src/lib/auth/creation';
 
 describe('Player', () => {
-  let player: Player;
+  let player: Player, restore;
+
+  before(() => {
+    restore = mockedEnv({
+      FACET_SAVE_DIR: './test/fixtures/save',
+      FACET_PLAYER_SAVE_DIR: './test/fixtures/save/players'
+    });
+  });
 
   beforeEach(() => {
     player = new Player(new Socket());
+  });
+
+  after(() => {
+    restore();
   });
 
   it('has an object type of player', () => {
@@ -58,7 +71,7 @@ describe('Player', () => {
   });
 
   it('toString returns the display name when available', () => {
-    player.playerData = {display_name: 'Ford Prefect'};
+    player._playerData = {display_name: 'Ford Prefect'};
     assume(player.toString()).equals('Ford Prefect');
   });
 
@@ -69,6 +82,28 @@ describe('Player', () => {
 
   it('is not considered logged in by default', () => {
     assume(player.loggedIn).is.false();
+  });
+
+  it('can find existing players', () => {
+    player.username = 'zaphod';
+    assume(player.exists()).is.true();
+  });
+
+  it('does not find non-existing players', () => {
+    player.username = 'ford';
+    assume(player.exists()).is.false();
+  });
+
+  it('does not find users when save file is not a file', () => {
+    player.username = 'trillian';
+    assume(player.exists()).is.false();
+  });
+
+  it('can load save files', () => {
+    player.username = 'zaphod';
+    const loaded = player.loadData().playerData;
+    const assumed = {username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42};
+    assume(loaded).eqls(assumed);
   });
 
   it('is not logged in without a password', () => {
@@ -85,7 +120,7 @@ describe('Player', () => {
   it('is logged in with username + password + player data', () => {
     player.username = 'ford_prefect';
     player.password = 'z@p40d_b33bl3br0x';
-    player.playerData = {display_name: 'Ford Prefect'};
+    player._playerData = {display_name: 'Ford Prefect'};
     assume(player.loggedIn).is.true();
   });
 
@@ -99,11 +134,6 @@ describe('Player', () => {
       player.password = 'z@p40d_b33bl3br0x';
       assume(player.inputHandler).equals(PlayerCreation.getInstance());
     });
-  });
-
-  it("cannot have player data set once it's already set", () => {
-    player.playerData = {display_name: 'Ford Prefect'};
-    assume(() => player.playerData = {foo: 'bar'}).throws(Error);
   });
 
   it("cannot have the username set once it's already been set", () => {

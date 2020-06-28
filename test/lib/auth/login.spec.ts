@@ -29,28 +29,6 @@ describe('Login', () => {
     assume(logind).equals(logind2);
   });
 
-  it('finds existing players', () => {
-    player.username = 'zaphod';
-    assume(logind.playerExists(player)).is.true();
-  });
-
-  it('does not find non-existing players', () => {
-    player.username = 'ford';
-    assume(logind.playerExists(player)).is.false();
-  });
-
-  it('does not find users when save file is not a file', () => {
-    player.username = 'trillian';
-    assume(logind.playerExists(player)).is.false();
-  });
-
-  it('can load players from their save files', () => {
-    player.username = 'zaphod';
-    const loaded = logind.loadPlayer(player);
-    const assumed = {username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42};
-    assume(loaded).eqls(assumed);
-  });
-
   after(() => {
     restore();
   });
@@ -63,14 +41,13 @@ describe('Login', () => {
     });
 
     it("sets a player's username first, if not set", () => {
-      sinon.stub(logind, 'playerExists');
+      sinon.stub(player, 'exists');
       logind.handleInput(player, 'ford_prefect');
       assume(player.username).equals('ford_prefect');
-      logind.playerExists.restore();
     });
 
     it('asks the user to set a password if they are new', () => {
-      sinon.stub(logind, 'playerExists');
+      sinon.stub(player, 'exists');
       sinon.stub(player, 'sendData');
       logind.handleInput(player, 'ford_prefect');
       assume(
@@ -78,11 +55,10 @@ describe('Login', () => {
           'What would you like for a password? '
         )
       ).is.true();
-      logind.playerExists.restore();
     });
 
     it('greets existing players and asks for a password', () => {
-      sinon.stub(logind, 'playerExists').returns(true);
+      sinon.stub(player, 'exists').returns(true);
       sinon.stub(player, 'sendData');
       logind.handleInput(player, 'ford_prefect');
       assume(
@@ -90,7 +66,6 @@ describe('Login', () => {
           'Welcome back!\nWhat... is your password? '
         )
       ).is.true();
-      logind.playerExists.restore();
     });
   });
 });
