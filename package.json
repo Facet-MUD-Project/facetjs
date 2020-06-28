@@ -26,6 +26,7 @@
   "devDependencies": {
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.0.5",
+    "@types/sinon": "^9.0.4",
     "assume": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-config-godaddy": "^4.0.0",
