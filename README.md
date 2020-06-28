@@ -1,5 +1,10 @@
 # FacetJS
 
+[![Build Status](https://github.com/Facet-MUD-Project/facetjs/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/Facet-MUD-Project/facetjs/actions?query=workflow%3A%22Node.js+CI%22)
+[![Codecov](https://img.shields.io/codecov/c/github/Facet-MUD-Project/facetjs)](https://codecov.io/gh/Facet-MUD-Project/facetjs)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a57c5f7e6024635aeb40b480edd6018)](https://www.codacy.com/gh/Facet-MUD-Project/facetjs?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Facet-MUD-Project/facetjs&amp;utm_campaign=Badge_Grade)
+[![License](https://img.shields.io/github/license/Facet-MUD-Project/facetjs)](https://github.com/Facet-MUD-Project/facetjs/blob/master/LICENSE)
+
 An implementation of the Facet MUD Project in JavaScript.
 
 ## Development
