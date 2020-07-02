@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as net from 'net';
 import * as path from 'path';
+import { TelnetSocket } from 'telnet-socket';
 import Game from './game';
 import Player from './base/player';
 
@@ -49,9 +50,9 @@ export default class Server {
    */
   async onConnect(conn: net.Socket) {
     console.debug('[debug] Incoming connection from ' + conn.remoteAddress);
-    conn.setEncoding('utf-8');
-    const player = new Player(conn);
-    conn.on('data', (data: string) => player.receiveData(data));
+    const telnetSocket = new TelnetSocket(conn);
+    const player = new Player(telnetSocket);
+    telnetSocket.on('data', (data: string) => player.receiveData(data.toString()));
     await player.sendData(this.motd);
     await player.sendData('What... is your name? ');
     await this._game.broadcast('A new player has entered the game!\r\n');

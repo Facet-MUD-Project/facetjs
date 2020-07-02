@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as toml from '@iarna/toml';
-import { Socket } from 'net';
 import * as path from 'path';
+import { TelnetSocket } from 'telnet-socket';
 
 import Living from "./living";
 import { ObjectType } from './enums';
@@ -17,14 +17,14 @@ import Config from '../../config';
  */
 export default class Player extends Living {
   protected _objectType: ObjectType = ObjectType.PLAYER;
-  private _socket: Socket = null;
+  private _socket: TelnetSocket = null;
   private _input_buffer: Array<string> = [];
   private _output_buffer: Array<string> = [];
   private _username: string = null;
   private _password: string = null;  // This will be encrypted.
   private _playerData: Object = null;
 
-  constructor(socket: Socket = null) {
+  constructor(socket: TelnetSocket = null) {
     super();
     this._socket = socket;
   }
@@ -51,6 +51,11 @@ export default class Player extends Living {
     else {
       return {handleInput: (player: Player, msg: string) => Game.getInstance().broadcast(msg)};
     }
+  }
+
+  setEcho(echo: boolean): void {
+    console.debug('[debug] Setting echo to:', echo);
+    echo ? this._socket.wont.echo() : this._socket.will.echo();
   }
 
   get playerData(): Object {
@@ -102,7 +107,7 @@ export default class Player extends Living {
   }
 
   get remoteAddress(): string {
-    const address = this._socket.address();
+    const address = this._socket.rawSocket.address();
     if (typeof address === 'string') return address;
     return `${address.address}:${address.port}`;
   }

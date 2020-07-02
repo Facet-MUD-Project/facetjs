@@ -2,7 +2,9 @@
 
 import assume from "assume";
 import mockedEnv from 'mocked-env';
+import { Socket } from 'net';
 import sinon from 'sinon';
+import { TelnetSocket } from 'telnet-socket';
 
 import Config from "../../../src/config";
 import Player from "../../../src/lib/base/player";
@@ -36,10 +38,12 @@ describe('Login', () => {
   });
 
   describe('handleInput', () => {
-    let player;
+    let player: Player;
 
     beforeEach(() => {
-      player = new Player();
+      player = new Player(new TelnetSocket(new Socket()));
+      sinon.stub(player._socket, 'will').get(() => {return {echo: sinon.stub()}});
+      sinon.stub(player._socket, 'wont').get(() => {return {echo: sinon.stub()}});
     });
 
     it("sets a player's username first, if not set", () => {
@@ -65,7 +69,7 @@ describe('Login', () => {
       logind.handleInput(player, 'ford_prefect');
       assume(
         player.sendData.firstCall.calledWithExactly(
-          'Welcome back!\nWhat... is your password? '
+          'Welcome back!\r\nWhat... is your password? '
         )
       ).is.true();
     });
@@ -85,7 +89,7 @@ describe('Login', () => {
       logind.handleInput(player, 'foobar');
       assume(
         player.sendData.firstCall.calledWithExactly(
-          'Welcome, Zaphod Beeblebrox!\n'
+          '\r\nWelcome, Zaphod Beeblebrox!\r\n'
         )
       ).is.true();
       passwords.checkPassword.restore();

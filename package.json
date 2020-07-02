@@ -61,6 +61,7 @@
     "require": "ts-node/register"
   },
   "dependencies": {
-    "@iarna/toml": "^2.2.5"
+    "@iarna/toml": "^2.2.5",
+    "telnet-socket": "^0.2.3"
   }
 }

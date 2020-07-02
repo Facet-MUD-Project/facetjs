@@ -17,11 +17,14 @@ export default class Login implements InputHandler {
       data = data.trim().toLowerCase();
       player.username = data;
       if (!player.exists()) {
-        player.sendData("Haven't seen you around here before.\n");
+        player.sendData("Haven't seen you around here before.\r\n");
         player.sendData('What would you like for a password? ');
+        player.setEcho(false);
+
       }
       else {
-        player.sendData('Welcome back!\nWhat... is your password? ');
+        player.sendData('Welcome back!\r\nWhat... is your password? ');
+        player.setEcho(false);
       }
     }
     else {
@@ -31,10 +34,12 @@ export default class Login implements InputHandler {
       data = data.replace(/\r?\n|\r/g, "");
       if (checkPassword(data, player_data['password'])) {
         player.password = data;
-        player.sendData(`Welcome, ${player}!\n`);
+        player.sendData(`\r\nWelcome, ${player}!\r\n`);
+        player.setEcho(true);
       }
       else {
-        player.sendData("Well that's just not right. Care to try again? ");
+        player.sendData("\r\nWell that's just not right. Care to try again? ");
+        player.setEcho(false);
       }
     }
   }
