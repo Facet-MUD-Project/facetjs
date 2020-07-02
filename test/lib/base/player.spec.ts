@@ -4,6 +4,7 @@ import assume from 'assume';
 import mockedEnv from 'mocked-env';
 import { Socket } from 'net';
 import sinon from 'sinon';
+import { TelnetSocket } from 'telnet-socket';
 
 import PlayerCreation from '../../../src/lib/auth/creation';
 import Login from '../../../src/lib/auth/login';
@@ -21,7 +22,7 @@ describe('Player', () => {
   });
 
   beforeEach(() => {
-    player = new Player(new Socket());
+    player = new Player(new TelnetSocket(new Socket()));
   });
 
   after(() => {
