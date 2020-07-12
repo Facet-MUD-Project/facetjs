@@ -9,7 +9,8 @@ describe('Item', () => {
   });
 
   it('is not a container by default', () => {
-    assume((item as any)._isContainer).is.false();
+    // @ts-ignore
+    assume(item._isContainer).is.false();
   });
 
   it('contentWeight is undefined by default', () => {
@@ -25,7 +26,8 @@ describe('Item', () => {
   });
 
   it('can contain things if it is a container', () => {
-    (item as any)._isContainer = true;
+    // @ts-ignore
+    item._isContainer = true;
     assume(item.canContain(new Item())).is.true();
   });
 });

@@ -72,7 +72,7 @@ describe('Player', () => {
   });
 
   it('toString returns the display name when available', () => {
-    player._playerData = {display_name: 'Ford Prefect'};
+    player._playerData = { display_name: 'Ford Prefect' };
     assume(player.toString()).equals('Ford Prefect');
   });
 
@@ -103,7 +103,7 @@ describe('Player', () => {
   it('can load save files', () => {
     player.username = 'zaphod';
     const loaded = player.loadData().playerData;
-    const assumed = {username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42};
+    const assumed = { username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42 };
     assume(loaded).eqls(assumed);
   });
 
@@ -121,7 +121,7 @@ describe('Player', () => {
   it('is logged in with username + password + player data', () => {
     player.username = 'ford_prefect';
     player.password = 'z@p40d_b33bl3br0x';
-    player._playerData = {display_name: 'Ford Prefect'};
+    player._playerData = { display_name: 'Ford Prefect' };
     assume(player.loggedIn).is.true();
   });
 
@@ -139,6 +139,6 @@ describe('Player', () => {
 
   it("cannot have the username set once it's already been set", () => {
     player.username = 'ford_prefect';
-    assume(() => player.username = 'zaphod_beeblebrox').throws(Error);
-  })
+    assume(() => { player.username = 'zaphod_beeblebrox'; }).throws(Error);
+  });
 });
