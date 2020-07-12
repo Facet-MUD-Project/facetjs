@@ -28,5 +28,5 @@ describe('Base Object', () => {
   it('weight accessors work', () => {
     obj.weight = 42.13;
     assume(obj.weight).equals(42.13);
-  })
+  });
 });

@@ -4,14 +4,14 @@ import * as path from 'path';
 export default class Config {
   private static instance: Config;
   // All options with their default values
-  server_address: string = '::';
-  server_port: number = 8000;
-  asset_directory: string;
-  save_directory: string = './save';
-  player_save_directory: string = './save/players';
+  serverAddress = '::';
+  serverPort = 8000;
+  assetDirectory: string;
+  saveDirectory = './save';
+  playerSaveDirectory = './save/players';
   // Used for crypto functions like salting player passwords
-  secret_key: string = 'CHANGE_ME';
-  auth_hash_iterations: number = 100000;
+  secretKey = 'CHANGE_ME';
+  authHashIterations = 100000;
 
   private constructor() {
     this.loadConfig();
@@ -22,14 +22,15 @@ export default class Config {
     return Config.instance;
   }
 
-  loadConfig() {
-    this.server_address = process.env.FACET_MUD_ADDRESS || this.server_address;
-    this.server_port = parseInt(process.env.FACET_MUD_PORT) || this.server_port;
-    this.asset_directory = process.env.FACET_ASSET_DIR || this.asset_directory;
-    this.save_directory = this.resolveFsPath(process.env.FACET_SAVE_DIR || this.save_directory);
-    this.player_save_directory = this.resolveFsPath(process.env.FACET_PLAYER_SAVE_DIR || this.player_save_directory);
-    this.secret_key = process.env.SECRET_KEY || this.secret_key;
-    this.auth_hash_iterations = parseInt(process.env.AUTH_HASH_ITERATIONS) || this.auth_hash_iterations;
+  loadConfig(): Config {
+    this.serverAddress = process.env.FACET_MUD_ADDRESS || this.serverAddress;
+    this.serverPort = parseInt(process.env.FACET_MUD_PORT, 10) || this.serverPort;
+    this.assetDirectory = process.env.FACET_ASSET_DIR || this.assetDirectory;
+    this.saveDirectory = this.resolveFsPath(process.env.FACET_SAVE_DIR || this.saveDirectory);
+    this.playerSaveDirectory = this.resolveFsPath(process.env.FACET_PLAYER_SAVE_DIR || this.playerSaveDirectory);
+    this.secretKey = process.env.SECRET_KEY || this.secretKey;
+    this.authHashIterations = parseInt(process.env.AUTH_HASH_ITERATIONS, 10) || this.authHashIterations;
+    return this;
   }
 
   resolveFsPath(dirpath: string): string {

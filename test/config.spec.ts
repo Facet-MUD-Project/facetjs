@@ -15,13 +15,13 @@ describe('Config', () => {
   });
 
   it('loads environment variables on loadConfig', () => {
-    let restore = mockedEnv({
+    const restore = mockedEnv({
       FACET_MUD_ADDRESS: '42.42.42.42',
       FACET_MUD_PORT: '4242'
     });
     config.loadConfig();
-    assume(config.server_address).equals('42.42.42.42');
-    assume(config.server_port).equals(4242);
+    assume(config.serverAddress).equals('42.42.42.42');
+    assume(config.serverPort).equals(4242);
     restore();
   });
 });

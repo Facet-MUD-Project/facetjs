@@ -10,7 +10,6 @@ describe('Game', () => {
   let game: Game;
 
   beforeEach(() => {
-    // @ts-ignore
     Game.instance = null;
     game = Game.getInstance();
   });
@@ -51,7 +50,7 @@ describe('Game', () => {
     game.startUp();
     assume(game.gameLoop.calledOnce).is.true();
     game.gameLoop.restore();
-  })
+  });
 
   it('changes state to shutting down when shutdown is called', () => {
     game.shutdown();
@@ -90,15 +89,15 @@ describe('Game', () => {
   });
 
   it("pushes buffered input through the player's input handler during game loop", () => {
-    let handler = null, handlers = [];
+    const handlers = [];
     game._players = [new Player(), new Player(), new Player()];
     game.players.forEach(
       (player) => {
         sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
         sinon.stub(player, 'inputHandler').get(() => {
-          handler = sinon.stub();
+          const handler = sinon.stub();
           handlers.push(handler);
-          return {handleInput: handler};
+          return { handleInput: handler };
         });
         player.receiveData('foo');
       }

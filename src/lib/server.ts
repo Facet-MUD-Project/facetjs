@@ -11,7 +11,7 @@ import Player from './base/player';
 export default class Server {
   public address: string;
   public port: number;
-  public motd: string = null;;
+  public motd: string = null;
   private _server: net.Server = null;
   private _game: Game = null;
 
@@ -23,7 +23,7 @@ export default class Server {
   /**
    * Read the MOTD file from disk and store it in a local property
    */
-  readMOTD() {
+  readMOTD(): void {
     fs.readFile(path.join(__dirname, '..', 'MOTD'), (err, data) => {
       if (err) {
         console.error(err);
@@ -36,7 +36,7 @@ export default class Server {
   /**
    * Create and start the TCP server on the configured address/port
    */
-  async startServer() {
+  async startServer(): Promise<void> {
     this.readMOTD();
     this._server = net.createServer((conn) => this.onConnect(conn));
     this._server.listen(this.port, this.address);
@@ -48,7 +48,7 @@ export default class Server {
   /**
    * Handle a new connection to the server
    */
-  async onConnect(conn: net.Socket) {
+  async onConnect(conn: net.Socket): Promise<void> {
     console.debug('[debug] Incoming connection from ' + conn.remoteAddress);
     const telnetSocket = new TelnetSocket(conn);
     const player = new Player(telnetSocket);
@@ -62,7 +62,7 @@ export default class Server {
   /**
    * Shut down the server, first informing and disconnecting all players
    */
-  async shutdown() {
+  async shutdown(): Promise<void> {
     console.info('[info] Shutting down server...');
     this._game.broadcast('The server is being shut down! Goodbye.\r\n');
     this._game.shutdown();

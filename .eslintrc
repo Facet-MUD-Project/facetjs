@@ -1,16 +1,43 @@
 {
   "root": true,
-  "extends": [
-    "godaddy",
-    "plugin:jsdoc/recommended"
-  ],
-  "rules": {
-    "no-process-env": [
-      0
-    ],
-    "no-console": "off"
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2015,
+    "sourceType": "module"
   },
   "plugins": [
-    "jsdoc"
+    "@typescript-eslint",
+    "eslint-plugin-json",
+    "eslint-plugin-mocha",
+    "eslint-plugin-node",
+    "eslint-plugin-tsdoc"
+  ],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "godaddy-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:mocha/recommended"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-process-env": "off",
+    "no-sync": "off",
+    "tsdoc/syntax": "warn",
+    "valid-jsdoc": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.spec.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off",
+        "max-len": "off",
+        "max-statements": "off"
+      }
+    }
   ]
 }

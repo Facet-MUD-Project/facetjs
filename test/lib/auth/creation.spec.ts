@@ -12,4 +12,4 @@ describe('Player Creation', () => {
     const creation2 = PlayerCreation.getInstance();
     assume(creation).equals(creation2);
   });
-})
+});

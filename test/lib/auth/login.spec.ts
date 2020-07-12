@@ -1,15 +1,15 @@
 // @ts-nocheck
 
-import assume from "assume";
+import assume from 'assume';
 import mockedEnv from 'mocked-env';
 import { Socket } from 'net';
 import sinon from 'sinon';
 import { TelnetSocket } from 'telnet-socket';
 
-import Config from "../../../src/config";
-import Player from "../../../src/lib/base/player";
-import Login from "../../../src/lib/auth/login";
-import * as passwords from "../../../src/lib/auth/passwords";
+import Config from '../../../src/config';
+import Player from '../../../src/lib/base/player';
+import Login from '../../../src/lib/auth/login';
+import * as passwords from '../../../src/lib/auth/passwords';
 
 describe('Login', () => {
   let config: Config, logind: Login, player: Player, restore;
@@ -38,12 +38,10 @@ describe('Login', () => {
   });
 
   describe('handleInput', () => {
-    let player: Player;
-
     beforeEach(() => {
       player = new Player(new TelnetSocket(new Socket()));
-      sinon.stub(player._socket, 'will').get(() => {return {echo: sinon.stub()}});
-      sinon.stub(player._socket, 'wont').get(() => {return {echo: sinon.stub()}});
+      sinon.stub(player._socket, 'will').get(() => { return { echo: sinon.stub() }; });
+      sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
     });
 
     it("sets a player's username first, if not set", () => {
@@ -82,7 +80,7 @@ describe('Login', () => {
       passwords.checkPassword.restore();
     });
 
-    it("welcomes the player if their password is correct", () => {
+    it('welcomes the player if their password is correct', () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
       sinon.stub(player, 'sendData');
       player.username = 'zaphod';
@@ -95,7 +93,7 @@ describe('Login', () => {
       passwords.checkPassword.restore();
     });
 
-    it("re-asks for a password if it was incorrect", () => {
+    it('re-asks for a password if it was incorrect', () => {
       sinon.stub(passwords, 'checkPassword').returns(false);
       sinon.stub(player, 'sendData');
       player.username = 'zaphod';

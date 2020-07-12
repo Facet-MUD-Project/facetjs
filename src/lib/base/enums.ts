@@ -7,7 +7,7 @@ export enum ObjectType {
   NPC = 'npc',
   ITEM = 'item',
   PLAYER = 'player'
-};
+}
 
 /**
  * Enum for the state of the main game engine
@@ -17,4 +17,4 @@ export enum GameState {
   RUNNING = 2,
   SHUTTING_DOWN = 3,
   SHUTDOWN = 4
-};
+}

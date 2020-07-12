@@ -1,5 +1,5 @@
-import Container from "./container";
-import { ObjectType } from "./enums";
+import Container from './container';
+import { ObjectType } from './enums';
 
 /**
  * A class representing a room in the game

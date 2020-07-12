@@ -1,13 +1,16 @@
 {
   "name": "facetmud",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "description": "An implementation of the FacetMUD Project in JavaScript",
   "main": "./src/index.ts",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts",
     "start": "ts-node .",
     "test": "nyc mocha",
     "docs": "typedoc src/",
@@ -27,12 +30,15 @@
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.0.5",
     "@types/sinon": "^9.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
     "assume": "^2.2.0",
     "eslint": "^6.8.0",
-    "eslint-config-godaddy": "^4.0.0",
-    "eslint-plugin-jsdoc": "^25.4.2",
+    "eslint-config-godaddy-typescript": "^1.0.1",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-tsdoc": "^0.2.5",
     "make-promises-safe": "^5.1.0",
     "mocha": "^7.1.1",
     "mocked-env": "^1.3.2",
@@ -40,7 +46,7 @@
     "sinon": "^9.0.2",
     "ts-node": "^8.10.2",
     "typedoc": "^0.17.7",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.6"
   },
   "nyc": {
     "all": true,

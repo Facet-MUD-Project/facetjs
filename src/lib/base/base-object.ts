@@ -5,9 +5,9 @@ import { ObjectType } from './enums';
  */
 export default class BaseObject {
   protected _objectType: ObjectType = ObjectType.UNDEFINED;
-  protected _shortDescription: string = 'Unknown';
-  protected _longDescription: string = 'Indescribable';
-  protected _weight: number = 0.0;
+  protected _shortDescription = 'Unknown';
+  protected _longDescription = 'Indescribable';
+  protected _weight = 0.0;
 
   toString(): string {
     return this._shortDescription;
