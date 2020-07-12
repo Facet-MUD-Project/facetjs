@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts",
     "start": "ts-node .",
     "test": "nyc mocha",
     "docs": "typedoc src/",
@@ -27,12 +27,14 @@
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.0.5",
     "@types/sinon": "^9.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
     "assume": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-config-godaddy": "^4.0.0",
-    "eslint-plugin-jsdoc": "^25.4.2",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-tsdoc": "^0.2.5",
     "make-promises-safe": "^5.1.0",
     "mocha": "^7.1.1",
     "mocked-env": "^1.3.2",
@@ -40,7 +42,39 @@
     "sinon": "^9.0.2",
     "ts-node": "^8.10.2",
     "typedoc": "^0.17.7",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.6"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "eslint-plugin-json",
+      "eslint-plugin-mocha",
+      "eslint-plugin-tsdoc"
+    ],
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "godaddy",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:mocha/recommended"
+    ],
+    "rules": {
+      "no-console": "off",
+      "tsdoc/syntax": "warn"
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.spec.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/ban-ts-comment": "off"
+        }
+      }
+    ]
   },
   "nyc": {
     "all": true,
