@@ -4,12 +4,10 @@ import BaseObject from './base-object';
 
 /**
  * A class representing an item
- *
- * @augments Container
  */
 export default class Item extends Container {
   protected _objectType: ObjectType = ObjectType.ITEM;
-  protected _isContainer: boolean = false;
+  protected _isContainer = false;
 
   get contentWeight(): number {
     if (this._isContainer) {

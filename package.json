@@ -1,6 +1,9 @@
 {
   "name": "facetmud",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "description": "An implementation of the FacetMUD Project in JavaScript",
   "main": "./src/index.ts",
   "directories": {
@@ -34,6 +37,7 @@
     "eslint-config-godaddy-typescript": "^1.0.1",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-tsdoc": "^0.2.5",
     "make-promises-safe": "^5.1.0",
     "mocha": "^7.1.1",
@@ -47,14 +51,20 @@
   "eslintConfig": {
     "root": true,
     "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2015,
+      "sourceType": "module"
+    },
     "plugins": [
       "@typescript-eslint",
       "eslint-plugin-json",
       "eslint-plugin-mocha",
+      "eslint-plugin-node",
       "eslint-plugin-tsdoc"
     ],
     "env": {
-      "node": true
+      "node": true,
+      "es6": true
     },
     "extends": [
       "godaddy-typescript",
@@ -63,8 +73,10 @@
     ],
     "rules": {
       "no-console": "off",
+      "no-process-env": "off",
       "no-sync": "off",
-      "tsdoc/syntax": "warn"
+      "tsdoc/syntax": "warn",
+      "valid-jsdoc": "off"
     },
     "overrides": [
       {

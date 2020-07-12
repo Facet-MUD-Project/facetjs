@@ -34,8 +34,8 @@ describe('Player', () => {
   });
   it('buffers output when sending data', () => {
     player.sendData('foo!');
-    assume(player._output_buffer).has.length(1);
-    assume(player._output_buffer).contains('foo!');
+    assume(player._outputBuffer).has.length(1);
+    assume(player._outputBuffer).contains('foo!');
   });
 
   it('calls end on its socket when disconnecting', () => {
@@ -45,7 +45,7 @@ describe('Player', () => {
   });
 
   it('empties the input buffer when retrieved', () => {
-    player._input_buffer = ['foo!'];
+    player._inputBuffer = ['foo!'];
     const buffer = player.inputBuffer;
     assume(buffer).has.length(1);
     assume(buffer).contains('foo!');

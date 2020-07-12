@@ -6,8 +6,8 @@ import { AlreadyContains, CannotContain, CannotRelease } from './exceptions';
  */
 export default class Container extends BaseObject {
   protected _contents: Set<BaseObject> = new Set([]);
-  public maxContentCount: number = Infinity;
-  public maxContentWeight: number = Infinity;
+  public maxContentCount = Infinity;
+  public maxContentWeight = Infinity;
 
   get contents(): Array<BaseObject> {
     return [...this._contents];
@@ -21,7 +21,7 @@ export default class Container extends BaseObject {
     return this._weight + this.contentWeight;
   }
 
-  set weight(weight) {
+  set weight(weight: number) {
     super.weight = weight;
   }
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import Server from "./lib/server";
-import Config from "./config";
+import Server from './lib/server';
+import Config from './config';
 
 import('make-promises-safe');
 
 const config = Config.getInstance();
 const server = new Server({
-  address: config.server_address,
-  port: config.server_port
+  address: config.serverAddress,
+  port: config.serverPort
 });
 server.startServer();
 

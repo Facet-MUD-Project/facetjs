@@ -1,5 +1,5 @@
-import Living from "./living";
-import { ObjectType } from "./enums";
+import Living from './living';
+import { ObjectType } from './enums';
 
 /**
  * A class representing a non-player character

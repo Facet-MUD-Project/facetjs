@@ -1,6 +1,5 @@
-import { GameState } from "./base/enums";
-import Login from './auth/login';
-import Player from "./base/player";
+import { GameState } from './base/enums';
+import Player from './base/player';
 
 /**
  * A class representing the game loop and player queue
@@ -10,7 +9,7 @@ export default class Game {
   private _players: Array<Player> = [];
   private _state: GameState = GameState.STARTING;
 
-  private constructor() {}
+  private constructor() { }  // eslint-disable-line
 
   static getInstance(): Game {
     if (!Game.instance) Game.instance = new Game();
@@ -26,7 +25,7 @@ export default class Game {
     return this._players;
   }
 
-  async gameLoop() {
+  async gameLoop(): Promise<void> {
     this.players.forEach((player) => {
       player.inputBuffer.forEach(
         (msg) => player.inputHandler.handleInput(player, msg)
@@ -37,19 +36,19 @@ export default class Game {
     else if (this._state === GameState.SHUTTING_DOWN) this._state = GameState.SHUTDOWN;
   }
 
-  async broadcast(msg: string) {
+  async broadcast(msg: string): Promise<void> {
     console.debug('[debug] Broadcasting message: ' + msg.trim());
     await Promise.all(
       this.players.map(async (player) => player.sendData(msg))
     );
   }
 
-  async startUp() {
+  async startUp(): Promise<void> {
     this._state = GameState.RUNNING;
     this.gameLoop();
   }
 
-  shutdown() {
+  shutdown(): void {
     this._state = GameState.SHUTTING_DOWN;
   }
 

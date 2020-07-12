@@ -6,13 +6,13 @@ export function checkPassword(password: string, encoded: string, salt: string = 
   return makePassword(password, salt) === encoded;
 }
 
-export function makePassword(password: string, salt: string = null) {
+export function makePassword(password: string, salt: string = null): string {
   const config = Config.getInstance();
   if (salt === null) {
-    salt = config.secret_key;
+    salt = config.secretKey;
   }
   const hashed = crypto.pbkdf2Sync(
-    password, salt, config.auth_hash_iterations, 64, 'sha512'
+    password, salt, config.authHashIterations, 64, 'sha512'
   );
   return hashed.toString('hex');
 }
