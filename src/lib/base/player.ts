@@ -11,7 +11,7 @@ import { makePassword } from '../auth/passwords';
 import Game from '../game';
 import { InputHandler } from '../interfaces';
 import Config from '../../config';
-import { PlayerLoginState } from '../auth/enums';
+import { PlayerLoginState, PlayerCreationState } from '../auth/enums';
 
 /**
  * A class representing a player character
@@ -21,7 +21,7 @@ export default class Player extends Living {
   private _socket: TelnetSocket = null;
   private _inputBuffer: Array<string> = [];
   private _outputBuffer: Array<string> = [];
-  private _playerData: Record<string, unknown> = {};
+  private _playerData: toml.JsonMap = {};
 
   loginState: PlayerLoginState = PlayerLoginState.USERNAME;
   gameplayState: PlayerGameplayState = PlayerGameplayState.LOGIN;
@@ -59,7 +59,7 @@ export default class Player extends Living {
     echo ? this._socket.wont.echo() : this._socket.will.echo();
   }
 
-  get playerData(): Record<string, unknown> {
+  get playerData(): toml.JsonMap {
     return this._playerData;
   }
 
@@ -77,11 +77,26 @@ export default class Player extends Living {
   }
 
   get username(): string | undefined {
-    return this._playerData ? <string>this._playerData.username : undefined;
+    return this._playerData ? this._playerData.username as string : undefined;
   }
 
   get displayName(): string {
-    return this.playerData ? <string>this.playerData.display_name : this.username;
+    return this.playerData.display_name ? this.playerData.display_name as string : this.username;
+  }
+
+  set displayName(name: string) {
+    this._playerData.display_name = name;
+  }
+
+  get creationState(): PlayerCreationState {
+    if (this._playerData.creationState === undefined) {
+      this._playerData.creationState = PlayerCreationState.PASSWORD;
+    }
+    return this._playerData.creationState as number;
+  }
+
+  set creationState(state: PlayerCreationState) {
+    this._playerData.creationState = state;
   }
 
   get savePath(): string {
@@ -149,6 +164,11 @@ export default class Player extends Living {
    * Save the player's state to a persistent data store
    */
   async save(): Promise<Player> {
+    const savePath = this.savePath;
+    if (!fs.existsSync(path.dirname(savePath))) {
+      fs.mkdirSync(path.dirname(savePath), { recursive: true });
+    }
+    fs.writeFileSync(savePath, toml.stringify(this.playerData));
     return this;
   }
 

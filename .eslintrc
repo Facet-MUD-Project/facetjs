@@ -25,6 +25,7 @@
     "no-console": "off",
     "no-process-env": "off",
     "no-sync": "off",
+    "no-undefined": "off",
     "tsdoc/syntax": "warn",
     "valid-jsdoc": "off"
   },

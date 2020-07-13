@@ -15,10 +15,15 @@ export default class Login implements InputHandler {
   }
 
   handleInput(player: Player, data: string): void {
-    if (player.loginState === PlayerLoginState.USERNAME) {
-      this.handleUsername(player, data);
-    } else if (player.loginState === PlayerLoginState.PASSWORD) {
-      this.handlePassword(player, data);
+    switch (player.loginState) {
+      case PlayerLoginState.USERNAME:
+        this.handleUsername(player, data);
+        break;
+      case PlayerLoginState.PASSWORD:
+        this.handlePassword(player, data);
+        break;
+      default:
+        throw new Error('Unexpected player login state.');
     }
   }
 
