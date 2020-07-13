@@ -6,8 +6,6 @@ import { PlayerGameplayState } from '../base/enums';
 
 export default class PlayerCreation implements InputHandler {
   private static instance: PlayerCreation;
-  // This can be used for temporary storage of data during creation
-  private static playerData: Record<string, unknown> = {};
 
   private constructor() { }  // eslint-disable-line
 
