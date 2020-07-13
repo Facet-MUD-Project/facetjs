@@ -1,6 +1,6 @@
 
-import* as net from 'net';
-import{TelnetSocket} from 'telnet-socket';
+import * as net from 'net';
+import { TelnetSocket } from 'telnet-socket';
 import Game from './game';
 import Player from './base/player';
 
@@ -8,10 +8,10 @@ import Player from './base/player';
  * The socket server used to accept user connections and handle data I/O
  */
 export default class Server {
- public  address: string;
- public  port: number;
- private  _server: net.Server = null;
- private  _game: Game = null;
+  public  address: string;
+  public  port: number;
+  private  _server: net.Server = null;
+  private  _game: Game = null;
 
   constructor({address = '::', port = 8000} = {}) {
     this.address = address;
