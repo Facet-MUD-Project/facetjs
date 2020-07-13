@@ -13,7 +13,7 @@ export default class Server {
   private  _server: net.Server = null;
   private  _game: Game = null;
 
-  constructor({address = '::', port = 8000} = {}) {
+  constructor({ address = '::', port = 8000 } = {}) {
     this.address = address;
     this.port = port;
   }
@@ -52,7 +52,7 @@ export default class Server {
     this._game.shutdown();
     this._game.gameLoop();
     await Promise.all(
-        this._game.players.map(async(player) => player.disconnect()));
+      this._game.players.map(async(player) => player.disconnect()));
     this._server.close();
   }
 }
