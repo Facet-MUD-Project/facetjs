@@ -12,8 +12,7 @@ export default class Game {
   private _players: Array<Player> = [];
   private _state: GameState = GameState.STARTING;
 
-  private
-  constructor() { }  // eslint-disable-line
+  private constructor() { }  // eslint-disable-line
 
   static getInstance(): Game {
     if (!Game.instance) Game.instance = new Game();
