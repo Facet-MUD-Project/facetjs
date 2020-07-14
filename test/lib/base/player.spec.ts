@@ -8,8 +8,9 @@ import { TelnetSocket } from 'telnet-socket';
 
 import PlayerCreation from '../../../src/lib/auth/creation';
 import Login from '../../../src/lib/auth/login';
-import { ObjectType } from '../../../src/lib/base/enums';
+import { ObjectType, PlayerGameplayState } from '../../../src/lib/base/enums';
 import Player from '../../../src/lib/base/player';
+import { PlayerLoginState } from '../../../src/lib/auth/enums';
 
 describe('Player', () => {
   let player: Player, restore;
@@ -19,6 +20,8 @@ describe('Player', () => {
       FACET_SAVE_DIR: './test/fixtures/save',
       FACET_PLAYER_SAVE_DIR: './test/fixtures/save/players'
     });
+    sinon.stub(console, 'debug');
+    sinon.stub(console, 'error');
   });
 
   beforeEach(() => {
@@ -27,6 +30,8 @@ describe('Player', () => {
 
   after(() => {
     restore();
+    console.debug.restore();
+    console.error.restore();
   });
 
   it('has an object type of player', () => {
@@ -107,22 +112,18 @@ describe('Player', () => {
     assume(loaded).eqls(assumed);
   });
 
+  it('is not logged in by default', () => {
+    assume(player.loggedIn).is.false();
+  });
+
+  it('is logged in when gameplay state is playing', () => {
+    player.gameplayState = PlayerGameplayState.PLAYING;
+    assume(player.loggedIn).is.true();
+  });
+
   it('is not logged in without a password', () => {
     player.username = 'ford_prefect';
     assume(player.loggedIn).is.false();
-  });
-
-  it('is not logged in without player data', () => {
-    player.username = 'ford_prefect';
-    player.password = 'z@p40d_b33bl3br0x';
-    assume(player.loggedIn).is.false();
-  });
-
-  it('is logged in with username + password + player data', () => {
-    player.username = 'ford_prefect';
-    player.password = 'z@p40d_b33bl3br0x';
-    player._playerData = { display_name: 'Ford Prefect' };
-    assume(player.loggedIn).is.true();
   });
 
   describe('inputHandler', () => {
@@ -130,10 +131,21 @@ describe('Player', () => {
       assume(player.inputHandler).equals(Login.getInstance());
     });
 
-    it('sends input to the player creation daemon if they are not logged in but have username / password', () => {
-      player.username = 'ford_prefect';
-      player.password = 'z@p40d_b33bl3br0x';
+    it('sends input to the player creation daemon if their gameplay state is creation', () => {
+      player.gameplayState = PlayerGameplayState.CREATION;
       assume(player.inputHandler).equals(PlayerCreation.getInstance());
+    });
+  });
+
+  describe('login state', () => {
+    it('is username by default', () => {
+      assume(player.loginState).equals(PlayerLoginState.USERNAME);
+    });
+  });
+
+  describe('gameplay state', () => {
+    it('is login by default', () => {
+      assume(player.gameplayState).equals(PlayerGameplayState.LOGIN);
     });
   });
 
