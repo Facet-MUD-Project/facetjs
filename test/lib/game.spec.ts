@@ -9,6 +9,16 @@ import Player from '../../src/lib/base/player';
 describe('Game', () => {
   let game: Game;
 
+  before(() => {
+    sinon.stub(console, 'debug');
+    sinon.stub(console, 'error');
+  });
+
+  after(() => {
+    console.debug.restore();
+    console.error.restore();
+  });
+
   beforeEach(() => {
     Game.instance = null;
     game = Game.getInstance();
