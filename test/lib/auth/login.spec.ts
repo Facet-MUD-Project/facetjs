@@ -78,14 +78,17 @@ describe('Login', () => {
 
     it("checks the user's password if they exist", () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
+      sinon.stub(passwords, 'makePassword');
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(passwords.checkPassword.calledOnce).is.true();
       passwords.checkPassword.restore();
+      passwords.makePassword.restore();
     });
 
     it('welcomes the player if their password is correct', () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
+      sinon.stub(passwords, 'makePassword');
       sinon.stub(player, 'sendData');
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
@@ -95,6 +98,7 @@ describe('Login', () => {
         )
       ).is.true();
       passwords.checkPassword.restore();
+      passwords.makePassword.restore();
     });
 
     it('re-asks for a password if it was incorrect', () => {
