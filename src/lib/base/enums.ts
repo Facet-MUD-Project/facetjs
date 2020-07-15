@@ -13,8 +13,17 @@ export enum ObjectType {
  * Enum for the state of the main game engine
  */
 export enum GameState {
-  STARTING = 1,
-  RUNNING = 2,
-  SHUTTING_DOWN = 3,
-  SHUTDOWN = 4
+  STARTING,
+  RUNNING,
+  SHUTTING_DOWN,
+  SHUTDOWN
+}
+
+/**
+ * Enum for what the player is currently doing and how to handle their input
+ */
+export enum PlayerGameplayState {
+  LOGIN,
+  CREATION,
+  PLAYING
 }

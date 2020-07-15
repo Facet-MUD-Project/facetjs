@@ -22,6 +22,14 @@ describe('Login', () => {
     config = Config.getInstance();
     config.loadConfig();
     logind = Login.getInstance();
+    sinon.stub(console, 'debug');
+    sinon.stub(console, 'error');
+  });
+
+  after(() => {
+    restore();
+    console.debug.restore();
+    console.error.restore();
   });
 
   beforeEach(() => {
@@ -31,10 +39,6 @@ describe('Login', () => {
   it('is a singleton', () => {
     const logind2 = Login.getInstance();
     assume(logind).equals(logind2);
-  });
-
-  after(() => {
-    restore();
   });
 
   describe('handleInput', () => {
@@ -74,29 +78,33 @@ describe('Login', () => {
 
     it("checks the user's password if they exist", () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
-      player.username = 'zaphod';
+      sinon.stub(passwords, 'makePassword');
+      logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(passwords.checkPassword.calledOnce).is.true();
       passwords.checkPassword.restore();
+      passwords.makePassword.restore();
     });
 
     it('welcomes the player if their password is correct', () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
+      sinon.stub(passwords, 'makePassword');
       sinon.stub(player, 'sendData');
-      player.username = 'zaphod';
+      logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(
-        player.sendData.firstCall.calledWithExactly(
+        player.sendData.secondCall.calledWithExactly(
           '\r\nWelcome, Zaphod Beeblebrox!\r\n'
         )
       ).is.true();
       passwords.checkPassword.restore();
+      passwords.makePassword.restore();
     });
 
     it('re-asks for a password if it was incorrect', () => {
       sinon.stub(passwords, 'checkPassword').returns(false);
       sinon.stub(player, 'sendData');
-      player.username = 'zaphod';
+      logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(
         player.sendData.firstCall.calledWithExactly(

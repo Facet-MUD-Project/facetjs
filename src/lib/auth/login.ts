@@ -1,6 +1,8 @@
 import Player from '../base/player';
 import { checkPassword } from './passwords';
 import { InputHandler } from '../interfaces';
+import { PlayerLoginState } from './enums';
+import { PlayerGameplayState } from '../base/enums';
 
 export default class Login implements InputHandler {
   private static instance: Login;
@@ -13,10 +15,15 @@ export default class Login implements InputHandler {
   }
 
   handleInput(player: Player, data: string): void {
-    if (player.username === null) {
-      this.handleUsername(player, data);
-    } else {
-      this.handlePassword(player, data);
+    switch (player.loginState) {
+      case PlayerLoginState.USERNAME:
+        this.handleUsername(player, data);
+        break;
+      case PlayerLoginState.PASSWORD:
+        this.handlePassword(player, data);
+        break;
+      default:
+        throw new Error('Unexpected player login state.');
     }
   }
 
@@ -24,10 +31,13 @@ export default class Login implements InputHandler {
     data = data.trim().toLowerCase();
     player.username = data;
     if (!player.exists()) {
+      player.loginState = PlayerLoginState.CREATION;
+      player.gameplayState = PlayerGameplayState.CREATION;
       player.sendData("Haven't seen you around here before.\r\n");
       player.sendData('What would you like for a password? ');
       player.setEcho(false);
     } else {
+      player.loginState = PlayerLoginState.PASSWORD;
       player.sendData('Welcome back!\r\nWhat... is your password? ');
       player.setEcho(false);
     }
@@ -42,6 +52,8 @@ export default class Login implements InputHandler {
       player.password = data;
       player.sendData(`\r\nWelcome, ${player}!\r\n`);
       player.setEcho(true);
+      player.loginState = PlayerLoginState.LOGGED_IN;
+      player.gameplayState = PlayerGameplayState.PLAYING;
     } else {
       player.sendData("\r\nWell that's just not right. Care to try again? ");
       player.setEcho(false);

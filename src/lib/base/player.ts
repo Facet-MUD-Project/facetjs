@@ -4,13 +4,14 @@ import * as path from 'path';
 import { TelnetSocket } from 'telnet-socket';
 
 import Living from './living';
-import { ObjectType } from './enums';
+import { ObjectType, PlayerGameplayState } from './enums';
 import PlayerCreation from '../auth/creation';
 import Login from '../auth/login';
 import { makePassword } from '../auth/passwords';
 import Game from '../game';
 import { InputHandler } from '../interfaces';
 import Config from '../../config';
+import { PlayerLoginState, PlayerCreationState } from '../auth/enums';
 
 /**
  * A class representing a player character
@@ -20,9 +21,10 @@ export default class Player extends Living {
   private _socket: TelnetSocket = null;
   private _inputBuffer: Array<string> = [];
   private _outputBuffer: Array<string> = [];
-  private _username: string = null;
-  private _password: string = null;  // This will be encrypted.
-  private _playerData: Record<string, unknown> = null;
+  private _playerData: toml.JsonMap = {};
+
+  loginState: PlayerLoginState = PlayerLoginState.USERNAME;
+  gameplayState: PlayerGameplayState = PlayerGameplayState.LOGIN;
 
   constructor(socket: TelnetSocket = null) {
     super();
@@ -34,19 +36,22 @@ export default class Player extends Living {
   }
 
   get loggedIn(): boolean {
-    return (this._username !== null && this._password !== null && this.playerData !== null);
+    return this.gameplayState === PlayerGameplayState.PLAYING;
   }
 
   get inputHandler(): InputHandler {
-    if (!this.loggedIn) {
-      if (this._username === null || this._password === null) {
-        console.debug('[debug] Sending input to login daemon.');
+    switch (this.gameplayState) {
+      case PlayerGameplayState.LOGIN:
+        console.debug('[debug] Sending input to the login daemon.');
         return Login.getInstance();
-      }
-      console.debug('[debug] Sending input to creation daemon.');
-      return PlayerCreation.getInstance();
+      case PlayerGameplayState.CREATION:
+        console.debug('[debug] Sending input to the player creation daemon.');
+        return PlayerCreation.getInstance();
+      case PlayerGameplayState.PLAYING:  // Fall through to the default handler
+      default:
+        console.debug('[debug] Echoing player input.');
+        return { handleInput: (player: Player, msg: string) => Game.getInstance().broadcast(msg) };
     }
-    return { handleInput: (player: Player, msg: string) => Game.getInstance().broadcast(msg) };
   }
 
   setEcho(echo: boolean): void {
@@ -54,7 +59,7 @@ export default class Player extends Living {
     echo ? this._socket.wont.echo() : this._socket.will.echo();
   }
 
-  get playerData(): Record<string, unknown> {
+  get playerData(): toml.JsonMap {
     return this._playerData;
   }
 
@@ -64,19 +69,34 @@ export default class Player extends Living {
   }
 
   set username(username: string) {
-    if (this._username !== null) {
+    if (this._playerData.username !== undefined) {
       throw new Error('Cannot set username after user is already logged in.');
     } else {
-      this._username = username;
+      this._playerData.username = username;
     }
   }
 
-  get username(): string {
-    return this._username;
+  get username(): string | undefined {
+    return this._playerData ? this._playerData.username as string : undefined;
   }
 
   get displayName(): string {
-    return this.playerData ? this.playerData.display_name as string : this.username;
+    return this.playerData.display_name ? this.playerData.display_name as string : this.username;
+  }
+
+  set displayName(name: string) {
+    this._playerData.display_name = name;
+  }
+
+  get creationState(): PlayerCreationState {
+    if (this._playerData.creationState === undefined) {
+      this._playerData.creationState = PlayerCreationState.PASSWORD;
+    }
+    return this._playerData.creationState as number;
+  }
+
+  set creationState(state: PlayerCreationState) {
+    this._playerData.creationState = state;
   }
 
   get savePath(): string {
@@ -85,7 +105,7 @@ export default class Player extends Living {
   }
 
   set password(password: string) {
-    this._password = makePassword(password);
+    this._playerData.password = makePassword(password);
   }
 
   /**
@@ -144,6 +164,11 @@ export default class Player extends Living {
    * Save the player's state to a persistent data store
    */
   async save(): Promise<Player> {
+    const savePath = this.savePath;
+    if (!fs.existsSync(path.dirname(savePath))) {
+      fs.mkdirSync(path.dirname(savePath), { recursive: true });
+    }
+    fs.writeFileSync(savePath, toml.stringify(this.playerData));
     return this;
   }
 
