@@ -9,6 +9,16 @@ import sinon from 'sinon';
 describe('Server', () => {
   let server: Server;
 
+  before(() => {
+    sinon.stub(console, 'debug');
+    sinon.stub(console, 'error');
+  });
+
+  after(() => {
+    console.debug.restore();
+    console.error.restore();
+  });
+
   beforeEach(() => {
     server = new Server({ port: 0 });
     server._game = Game.getInstance();
