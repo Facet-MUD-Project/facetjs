@@ -58,6 +58,7 @@ export default class PlayerCreation implements InputHandler {
   }
 
   private handleDisplayName(player: Player, data: string): void {
+    if (data.trim() === '') data = player.username;
     player.sendData(`Great! Other players will see you as ${data} now.\r\n`);
     player.displayName = data;
     this.finishCreation(player);
