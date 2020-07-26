@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { config as configEnv } from 'dotenv';
+
 export default class Config {
   private static instance: Config;
   // All options with their default values
@@ -23,6 +25,9 @@ export default class Config {
   }
 
   loadConfig(): Config {
+    // First, load a top-level .env file into the environment
+    configEnv({ path: path.resolve(__dirname, '../.env') });
+    // Then, extract environment variables into local config
     this.serverAddress = process.env.FACET_MUD_ADDRESS || this.serverAddress;
     this.serverPort = parseInt(process.env.FACET_MUD_PORT, 10) || this.serverPort;
     this.assetDirectory = process.env.FACET_ASSET_DIR || this.assetDirectory;
