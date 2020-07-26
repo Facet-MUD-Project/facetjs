@@ -27,7 +27,8 @@
     "no-sync": "off",
     "no-undefined": "off",
     "tsdoc/syntax": "warn",
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
+    "max-nested-callbacks": "off"
   },
   "overrides": [
     {
