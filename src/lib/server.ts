@@ -8,10 +8,10 @@ import Player from './base/player';
  * The socket server used to accept user connections and handle data I/O
  */
 export default class Server {
-  public  address: string;
-  public  port: number;
-  private  _server: net.Server = null;
-  private  _game: Game = null;
+  public address: string;
+  public port: number;
+  private _server: net.Server = null;
+  private _game: Game = null;
 
   constructor({ address = '::', port = 8000 } = {}) {
     this.address = address;
@@ -37,10 +37,16 @@ export default class Server {
     const telnetSocket = new TelnetSocket(conn);
     const player = new Player(telnetSocket);
     telnetSocket.on('data', (data: string) => player.receiveData(data.toString()));
+    telnetSocket.on('close', () => this.onClose(player));
     await player.sendData(this._game.motd);
     await player.sendData('What... is your name? ');
     await this._game.broadcast('A new player has entered the game!\r\n');
     this._game.addPlayer(player);
+  }
+
+  async onClose(player: Player): Promise<void> {
+    this._game.broadcast(`${player} has disconnected.\r\n`);
+    this._game.removePlayer(player);
   }
 
   /**
@@ -52,7 +58,7 @@ export default class Server {
     this._game.shutdown();
     this._game.gameLoop();
     await Promise.all(
-      this._game.players.map(async(player) => player.disconnect()));
+      this._game.players.map(async (player) => player.disconnect()));
     this._server.close();
   }
 }
