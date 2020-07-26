@@ -35,6 +35,7 @@ describe('Player Creation', () => {
     player.username = 'zaphod_beeblebrox';
     player.gameplayState = PlayerGameplayState.CREATION;
     sinon.stub(player, 'sendData');
+    sinon.stub(player, 'save');
     sinon.stub(player._socket, 'will').get(() => { return { echo: sinon.stub() }; });
     sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
   });
