@@ -22,21 +22,42 @@ describe('Server', () => {
   beforeEach(() => {
     server = new Server({ port: 0 });
     server._game = Game.getInstance();
+    server._game._players = [];
   });
 
-  it('disconnects all players on shutdown', async () => {
-    server._server = { close: () => null };
-    server._game._players = [new Player(), new Player(), new Player()];
-    server._game._players.forEach(
-      (player) => {
-        sinon.stub(player, 'disconnect');
-        sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
-      }
-    );
-    sinon.stub(server._game, 'gameLoop');
-    await server.shutdown();
-    server._game._players.forEach((player) => {
-      assume(player.disconnect.calledOnce).is.true();
+  describe('shutdown', () => {
+    it('disconnects all players', async () => {
+      server._server = { close: () => null };
+      server._game._players = [new Player(), new Player(), new Player()];
+      server._game._players.forEach(
+        (player) => {
+          sinon.stub(player, 'disconnect');
+          sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
+        }
+      );
+      sinon.stub(server._game, 'gameLoop');
+      await server.shutdown();
+      server._game._players.forEach((player) => {
+        assume(player.disconnect.calledOnce).is.true();
+      });
+    });
+  });
+
+  describe('closed connection', () => {
+    it('announces that the player left', async () => {
+      sinon.spy(server._game, 'broadcast');
+      const player = new Player();
+      player.displayName = 'Ford Prefect';
+      server._game._players = [player];
+      await server.onClose(player);
+      assume(server._game.broadcast.firstCall.args[0]).equals('Ford Prefect has disconnected.\r\n');
+    });
+
+    it('removes the player from the game', async () => {
+      const player = new Player();
+      server._game.addPlayer(player);
+      await server.onClose(player);
+      assume(server._game.players).is.empty();
     });
   });
 

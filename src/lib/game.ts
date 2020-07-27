@@ -24,6 +24,13 @@ export default class Game {
     return this;
   }
 
+  removePlayer(player: Player): Game {
+    if (this._players.includes(player)) {
+      this._players.splice(this._players.indexOf(player), 1);
+    }
+    return this;
+  }
+
   get players(): Array<Player> { return this._players; }
 
   async gameLoop(): Promise<void> {

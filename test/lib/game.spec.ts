@@ -48,23 +48,70 @@ describe('Game', () => {
     assume(game.state).equals(GameState.STARTING);
   });
 
-  it('changes to running state after starting up', () => {
-    sinon.stub(game, 'gameLoop');
-    game.startUp();
-    assume(game.state).equals(GameState.RUNNING);
-    game.gameLoop.restore();
+  describe('startup', () => {
+    it('changes to running state', () => {
+      sinon.stub(game, 'gameLoop');
+      game.startUp();
+      assume(game.state).equals(GameState.RUNNING);
+      game.gameLoop.restore();
+    });
+
+    it('starts the game loop', () => {
+      sinon.stub(game, 'gameLoop');
+      game.startUp();
+      assume(game.gameLoop.calledOnce).is.true();
+      game.gameLoop.restore();
+    });
   });
 
-  it('starts the game loop when starting up', () => {
-    sinon.stub(game, 'gameLoop');
-    game.startUp();
-    assume(game.gameLoop.calledOnce).is.true();
-    game.gameLoop.restore();
+  describe('shutdown', () => {
+    it('sets state to shutting down', () => {
+      game.shutdown();
+      assume(game.state).equals(GameState.SHUTTING_DOWN);
+    });
+    it('changes state to shut down', () => {
+      game.shutdown();
+      game.gameLoop();
+      assume(game.state).equals(GameState.SHUTDOWN);
+    });
   });
 
-  it('changes state to shutting down when shutdown is called', () => {
-    game.shutdown();
-    assume(game.state).equals(GameState.SHUTTING_DOWN);
+  describe('game loop', () => {
+    it('flushes all players output buffers', () => {
+      game._players = [new Player(), new Player(), new Player()];
+      game.players.forEach(
+        (player) => {
+          sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
+          sinon.stub(player, 'flushOutput');
+        }
+      );
+      game.shutdown();
+      game.gameLoop();
+      game.players.forEach((player) => {
+        assume(player.flushOutput.calledOnce).is.true();
+      });
+    });
+
+    it("pushes buffered input through the player's input handler", () => {
+      const handlers = [];
+      game._players = [new Player(), new Player(), new Player()];
+      game.players.forEach(
+        (player) => {
+          sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
+          sinon.stub(player, 'inputHandler').get(() => {
+            const handler = sinon.stub();
+            handlers.push(handler);
+            return { handleInput: handler };
+          });
+          player.receiveData('foo');
+        }
+      );
+      game.shutdown();
+      game.gameLoop();
+      handlers.forEach((handler) => {
+        assume(handler.called).is.true();
+      });
+    });
   });
 
   it('adds to the player list when addPlayer is called', () => {
@@ -77,45 +124,23 @@ describe('Game', () => {
     assume(game.players[1]).equals(player2);
   });
 
-  it('sets state to shut down if it is shutting down', () => {
-    game.shutdown();
-    game.gameLoop();
-    assume(game.state).equals(GameState.SHUTDOWN);
-  });
-
-  it('flushes all players output buffers during game loop', () => {
-    game._players = [new Player(), new Player(), new Player()];
-    game.players.forEach(
-      (player) => {
-        sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
-        sinon.stub(player, 'flushOutput');
-      }
-    );
-    game.shutdown();
-    game.gameLoop();
-    game.players.forEach((player) => {
-      assume(player.flushOutput.calledOnce).is.true();
+  describe('removePlayer', () => {
+    it('removes the player from the player list', () => {
+      const player1 = new Player();
+      const player2 = new Player();
+      game.addPlayer(player1);
+      game.addPlayer(player2);
+      game.removePlayer(player1);
+      assume(game.players).has.length(1);
+      assume(game.players[0]).equals(player2);
+      game.removePlayer(player2);
+      assume(game.players).is.empty();
     });
-  });
 
-  it("pushes buffered input through the player's input handler during game loop", () => {
-    const handlers = [];
-    game._players = [new Player(), new Player(), new Player()];
-    game.players.forEach(
-      (player) => {
-        sinon.stub(player, 'remoteAddress').get(() => '127.0.0.1');
-        sinon.stub(player, 'inputHandler').get(() => {
-          const handler = sinon.stub();
-          handlers.push(handler);
-          return { handleInput: handler };
-        });
-        player.receiveData('foo');
-      }
-    );
-    game.shutdown();
-    game.gameLoop();
-    handlers.forEach((handler) => {
-      assume(handler.called).is.true();
+    it("passes silently when the player isn't in the game", () => {
+      game.addPlayer(new Player());
+      game.removePlayer(new Player());
+      assume(game.players).has.length(1);
     });
   });
 });
