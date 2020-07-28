@@ -1,6 +1,7 @@
 # FacetJS
 
 [![Build Status](https://github.com/Facet-MUD-Project/facetjs/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/Facet-MUD-Project/facetjs/actions?query=workflow%3A%22Node.js+CI%22)
+[![CodeQL](https://github.com/Facet-MUD-Project/facetjs/workflows/CodeQL/badge.svg)](https://github.com/Facet-MUD-Project/facetjs/actions?query=workflow%3ACodeQL)
 [![Codecov](https://img.shields.io/codecov/c/github/Facet-MUD-Project/facetjs)](https://codecov.io/gh/Facet-MUD-Project/facetjs)
 [![License](https://img.shields.io/github/license/Facet-MUD-Project/facetjs)](https://github.com/Facet-MUD-Project/facetjs/blob/master/LICENSE)
 
