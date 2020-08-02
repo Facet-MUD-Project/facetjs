@@ -143,4 +143,23 @@ describe('Game', () => {
       assume(game.players).has.length(1);
     });
   });
+
+  describe('playerConnected', () => {
+    let player1: Player, player2: Player;
+    beforeEach(() => {
+      player1 = new Player();
+      player2 = new Player();
+      player1.username = 'ford_prefect';
+      player2.username = 'ford_prefect';
+    });
+
+    it('returns true when the player is already connected', () => {
+      game.addPlayer(player1);
+      assume(game.playerConnected(player2)).is.true();
+    });
+
+    it('returns false when the player is not yet connected', () => {
+      assume(game.playerConnected(player1)).is.false();
+    });
+  });
 });

@@ -31,6 +31,10 @@ export default class Game {
     return this;
   }
 
+  playerConnected(player: Player): boolean {
+    return (this.players.filter(p => p.username === player.username)).length > 0;
+  }
+
   get players(): Array<Player> { return this._players; }
 
   async gameLoop(): Promise<void> {
