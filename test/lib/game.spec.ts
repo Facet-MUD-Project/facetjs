@@ -162,4 +162,17 @@ describe('Game', () => {
       assume(game.playerConnected(player1)).is.false();
     });
   });
+
+  describe('getPlayer', () => {
+    it('returns the requested player', () => {
+      const player = new Player();
+      player.username = 'ford_prefect';
+      game.addPlayer(player);
+      assume(game.getPlayer('ford_prefect')).equals(player);
+    });
+
+    it('returns undefined when the player is not found', () => {
+      assume(game.getPlayer('ford_prefect')).equals(undefined);
+    });
+  });
 });

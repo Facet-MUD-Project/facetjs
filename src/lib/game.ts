@@ -31,8 +31,12 @@ export default class Game {
     return this;
   }
 
+  getPlayer(username: string): Player | undefined {
+    return (this.players.filter(p => p.username === username))[0];
+  }
+
   playerConnected(player: Player): boolean {
-    return (this.players.filter(p => p.username === player.username)).length > 0;
+    return this.getPlayer(player.username) !== undefined;
   }
 
   get players(): Array<Player> { return this._players; }
