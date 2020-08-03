@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { GameState } from './base/enums';
+import { GameState, PlayerGameplayState } from './base/enums';
 import Player from './base/player';
 
 /**
@@ -32,7 +32,9 @@ export default class Game {
   }
 
   getPlayer(username: string): Player | undefined {
-    return (this.players.filter(p => p.username === username))[0];
+    return (this.players.filter(
+      p => p.gameplayState === PlayerGameplayState.PLAYING && p.username === username
+    ))[0];
   }
 
   playerConnected(player: Player): boolean {
@@ -46,6 +48,10 @@ export default class Game {
       player.inputBuffer.forEach(
         (msg) => player.inputHandler.handleInput(player, msg));
       player.flushOutput();
+      if (player.gameplayState === PlayerGameplayState.DISCONNECT) {
+        player.disconnect(true);
+        this.removePlayer(player);
+      }
     });
     if (this._state === GameState.RUNNING)
       setTimeout(() => this.gameLoop());

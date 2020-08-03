@@ -25,5 +25,6 @@ export enum GameState {
 export enum PlayerGameplayState {
   LOGIN,
   CREATION,
-  PLAYING
+  PLAYING,
+  DISCONNECT
 }
