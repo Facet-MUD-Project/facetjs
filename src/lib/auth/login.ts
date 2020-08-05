@@ -75,10 +75,10 @@ export default class Login implements InputHandler {
   private handleLoginConflict(player: Player, data: string): void {
     data = data.toLocaleLowerCase().trim();
     const game = Game.getInstance();
-    if (data === 'n' || data === '') {
+    if (data === 'n' || data === 'yes' || data === '') {
       player.sendData('Okay then. Goodbye!\r\n');
       player.disconnect();
-    } else if (data === 'y') {
+    } else if (data === 'y' || data === "yes") {
       player.sendData('Please stand by. Transferring connection!\r\n');
       const existing = game.getPlayer(player.username);
       if (existing !== undefined) {
