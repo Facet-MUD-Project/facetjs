@@ -55,7 +55,7 @@ export default class Login implements InputHandler {
     if (checkPassword(data, <string>playerData.password)) {
       player.password = data;
       const game = Game.getInstance();
-      if (!game.playerConnected(player)) {
+      if (!game.playerLoggedIn(player)) {
         player.sendData(`\r\nWelcome, ${player}!\r\n`);
         player.setEcho(true);
         player.loginState = PlayerLoginState.LOGGED_IN;

@@ -31,13 +31,13 @@ export default class Game {
     return this;
   }
 
-  getPlayer(username: string): Player | undefined {
+  getPlayer(username: string): Player | boolean {
     return (this.players.filter(
-      p => p.gameplayState === PlayerGameplayState.PLAYING && p.username === username
+      p => p.loginState === PlayerLoginState.LOGGED_IN && p.username === username
     ))[0];
   }
 
-  playerConnected(player: Player): boolean {
+  playerLoggedIn(player: Player): boolean {
     return this.getPlayer(player.username) !== undefined;
   }
 
