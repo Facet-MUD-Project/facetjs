@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { GameState, PlayerGameplayState } from './base/enums';
 import Player from './base/player';
+import { PlayerLoginState } from './auth/enums';
 
 /**
  * A class representing the game loop and player queue
@@ -31,7 +32,7 @@ export default class Game {
     return this;
   }
 
-  getPlayer(username: string): Player | boolean {
+  getPlayer(username: string): Player | undefined {
     return (this.players.filter(
       p => p.loginState === PlayerLoginState.LOGGED_IN && p.username === username
     ))[0];
