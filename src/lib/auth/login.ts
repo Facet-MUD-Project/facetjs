@@ -78,7 +78,7 @@ export default class Login implements InputHandler {
     if (data === 'n' || data === 'yes' || data === '') {
       player.sendData('Okay then. Goodbye!\r\n');
       player.disconnect();
-    } else if (data === 'y' || data === "yes") {
+    } else if (data === 'y' || data === 'yes') {
       player.sendData('Please stand by. Transferring connection!\r\n');
       const existing = game.getPlayer(player.username);
       if (existing !== undefined) {
