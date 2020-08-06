@@ -12,6 +12,7 @@ import Login from '../../../src/lib/auth/login';
 import * as passwords from '../../../src/lib/auth/passwords';
 import Game from '../../../src/lib/game';
 import { PlayerLoginState } from '../../../src/lib/auth/enums';
+import { PlayerGameplayState } from '../../../src/lib/base/enums';
 
 describe('Login', () => {
   let config: Config, game: Game, logind: Login, player: Player, restore;
@@ -51,6 +52,7 @@ describe('Login', () => {
       sinon.stub(passwords, 'checkPassword').returns(true);
       sinon.stub(passwords, 'makePassword');
       sinon.stub(player, 'sendData');
+      sinon.stub(player, 'disconnect');
     });
 
     afterEach(() => {
@@ -121,6 +123,65 @@ describe('Login', () => {
       logind.handleInput(player, 'foobar');
       assume(player.sendData.secondCall.calledWithExactly("\r\nUh oh. It looks like you're already connected.\r\n")).is.true();
       assume(player.sendData.thirdCall.calledWithExactly('Would you like to take over that connection? [y/N] '));
+      game.removePlayer(player2);
+    });
+
+    it('disconnects the player if they decide not to take over their connection', () => {
+      const player2 = new Player();
+      game = Game.getInstance();
+      player2.username = 'zaphod';
+      player2.loginState = PlayerLoginState.LOGGED_IN;
+      game.addPlayer(player2);
+      logind.handleInput(player, 'zaphod');
+      logind.handleInput(player, 'foobar');
+      logind.handleInput(player, 'n');
+      assume(player.disconnect.calledOnce).is.true();
+      game.removePlayer(player2);
+    });
+
+    it('logs the player in if they decide to take over their connection', () => {
+      const player2 = new Player();
+      game = Game.getInstance();
+      player2.username = 'zaphod';
+      player2.loginState = PlayerLoginState.LOGGED_IN;
+      sinon.stub(player2, 'save');
+      game.addPlayer(player2);
+      logind.handleInput(player, 'zaphod');
+      logind.handleInput(player, 'foobar');
+      logind.handleInput(player, 'y');
+      assume(player.loggedIn).is.true();
+      assume(player.gameplayState).equals(PlayerGameplayState.PLAYING);
+      game.removePlayer(player2);
+    });
+
+    it('logs the other player out if they decide to take over their connection', () => {
+      const player2 = new Player();
+      game = Game.getInstance();
+      player2.username = 'zaphod';
+      player2.loginState = PlayerLoginState.LOGGED_IN;
+      sinon.stub(player2, 'save');
+      sinon.stub(player2, 'disconnect');
+      game.addPlayer(player2);
+      logind.handleInput(player, 'zaphod');
+      logind.handleInput(player, 'foobar');
+      logind.handleInput(player, 'y');
+      assume(player2.save.calledOnce).is.true();
+      assume(player2.disconnect.calledOnce).is.true();
+      game.removePlayer(player2);
+    });
+
+    it('asks the player to try again when they respond nonsense to a connection conflict', () => {
+      const player2 = new Player();
+      game = Game.getInstance();
+      player2.username = 'zaphod';
+      player2.loginState = PlayerLoginState.LOGGED_IN;
+      sinon.stub(player2, 'save');
+      game.addPlayer(player2);
+      logind.handleInput(player, 'zaphod');
+      logind.handleInput(player, 'foobar');
+      logind.handleInput(player, 'gobbledygook');
+      assume(player.sendData.getCall(3).calledWithExactly("Wait, what? I don't understand that.\r\n")).is.true();
+      assume(player.sendData.getCall(4).calledWithExactly('Would you like to take over the other connection? [y/N] ')).is.true();
       game.removePlayer(player2);
     });
   });
