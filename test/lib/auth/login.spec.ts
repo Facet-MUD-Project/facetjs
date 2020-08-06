@@ -10,9 +10,11 @@ import Config from '../../../src/config';
 import Player from '../../../src/lib/base/player';
 import Login from '../../../src/lib/auth/login';
 import * as passwords from '../../../src/lib/auth/passwords';
+import Game from '../../../src/lib/game';
+import { PlayerLoginState } from '../../../src/lib/auth/enums';
 
 describe('Login', () => {
-  let config: Config, logind: Login, player: Player, restore;
+  let config: Config, game: Game, logind: Login, player: Player, restore;
 
   before(() => {
     restore = mockedEnv({
@@ -46,6 +48,14 @@ describe('Login', () => {
       player = new Player(new TelnetSocket(new Socket()));
       sinon.stub(player._socket, 'will').get(() => { return { echo: sinon.stub() }; });
       sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
+      sinon.stub(passwords, 'checkPassword').returns(true);
+      sinon.stub(passwords, 'makePassword');
+      sinon.stub(player, 'sendData');
+    });
+
+    afterEach(() => {
+      passwords.checkPassword.restore();
+      passwords.makePassword.restore();
     });
 
     it("sets a player's username first, if not set", () => {
@@ -56,7 +66,6 @@ describe('Login', () => {
 
     it('asks the user to set a password if they are new', () => {
       sinon.stub(player, 'exists');
-      sinon.stub(player, 'sendData');
       logind.handleInput(player, 'ford_prefect');
       assume(
         player.sendData.secondCall.calledWithExactly(
@@ -67,7 +76,6 @@ describe('Login', () => {
 
     it('greets existing players and asks for a password', () => {
       sinon.stub(player, 'exists').returns(true);
-      sinon.stub(player, 'sendData');
       logind.handleInput(player, 'ford_prefect');
       assume(
         player.sendData.firstCall.calledWithExactly(
@@ -77,19 +85,12 @@ describe('Login', () => {
     });
 
     it("checks the user's password if they exist", () => {
-      sinon.stub(passwords, 'checkPassword').returns(true);
-      sinon.stub(passwords, 'makePassword');
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(passwords.checkPassword.calledOnce).is.true();
-      passwords.checkPassword.restore();
-      passwords.makePassword.restore();
     });
 
     it('welcomes the player if their password is correct', () => {
-      sinon.stub(passwords, 'checkPassword').returns(true);
-      sinon.stub(passwords, 'makePassword');
-      sinon.stub(player, 'sendData');
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(
@@ -97,13 +98,10 @@ describe('Login', () => {
           '\r\nWelcome, Zaphod Beeblebrox!\r\n'
         )
       ).is.true();
-      passwords.checkPassword.restore();
-      passwords.makePassword.restore();
     });
 
     it('re-asks for a password if it was incorrect', () => {
-      sinon.stub(passwords, 'checkPassword').returns(false);
-      sinon.stub(player, 'sendData');
+      passwords.checkPassword.returns(false);
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(
@@ -111,7 +109,19 @@ describe('Login', () => {
           "Well that's just not right. Care to try again? "
         )
       );
-      passwords.checkPassword.restore();
+    });
+
+    it("asks the player if the want to take over the connection if they're already connected", () => {
+      const player2 = new Player();
+      game = Game.getInstance();
+      player2.username = 'zaphod';
+      player2.loginState = PlayerLoginState.LOGGED_IN;
+      game.addPlayer(player2);
+      logind.handleInput(player, 'zaphod');
+      logind.handleInput(player, 'foobar');
+      assume(player.sendData.secondCall.calledWithExactly("\r\nUh oh. It looks like you're already connected.\r\n")).is.true();
+      assume(player.sendData.thirdCall.calledWithExactly('Would you like to take over that connection? [y/N] '));
+      game.removePlayer(player2);
     });
   });
 });
