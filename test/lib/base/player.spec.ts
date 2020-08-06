@@ -43,10 +43,9 @@ describe('Player', () => {
     assume(player._outputBuffer).contains('foo!');
   });
 
-  it('calls end on its socket when disconnecting', () => {
-    sinon.stub(player._socket, 'end');
+  it("sets the player's gameplay state to disconnect on disconnect", () => {
     player.disconnect();
-    assume(player._socket.end.calledOnce).is.true();
+    assume(player.gameplayState).equals(PlayerGameplayState.DISCONNECT);
   });
 
   it('empties the input buffer when retrieved', () => {

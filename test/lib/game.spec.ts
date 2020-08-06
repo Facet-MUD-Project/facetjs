@@ -5,6 +5,7 @@ import Game from '../../src/lib/game';
 import { GameState } from '../../src/lib/base/enums';
 import sinon from 'sinon';
 import Player from '../../src/lib/base/player';
+import { PlayerLoginState } from '../../src/lib/auth/enums';
 
 describe('Game', () => {
   let game: Game;
@@ -144,22 +145,24 @@ describe('Game', () => {
     });
   });
 
-  describe('playerConnected', () => {
+  describe('playerLoggedIn', () => {
     let player1: Player, player2: Player;
     beforeEach(() => {
       player1 = new Player();
       player2 = new Player();
       player1.username = 'ford_prefect';
+      player1.loginState = PlayerLoginState.LOGGED_IN;
       player2.username = 'ford_prefect';
+      player1.loginState = PlayerLoginState.LOGGED_IN;
     });
 
     it('returns true when the player is already connected', () => {
       game.addPlayer(player1);
-      assume(game.playerConnected(player2)).is.true();
+      assume(game.playerLoggedIn(player2)).is.true();
     });
 
     it('returns false when the player is not yet connected', () => {
-      assume(game.playerConnected(player1)).is.false();
+      assume(game.playerLoggedIn(player1)).is.false();
     });
   });
 
@@ -167,6 +170,7 @@ describe('Game', () => {
     it('returns the requested player', () => {
       const player = new Player();
       player.username = 'ford_prefect';
+      player.loginState = PlayerLoginState.LOGGED_IN;
       game.addPlayer(player);
       assume(game.getPlayer('ford_prefect')).equals(player);
     });
