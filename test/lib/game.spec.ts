@@ -2,10 +2,11 @@
 
 import assume from 'assume';
 import Game from '../../src/lib/game';
-import { GameState } from '../../src/lib/base/enums';
+import { GameState, PlayerGameplayState } from '../../src/lib/base/enums';
 import sinon from 'sinon';
 import Player from '../../src/lib/base/player';
 import { PlayerLoginState } from '../../src/lib/auth/enums';
+import { Socket } from 'net';
 
 describe('Game', () => {
   let game: Game;
@@ -112,6 +113,26 @@ describe('Game', () => {
       handlers.forEach((handler) => {
         assume(handler.called).is.true();
       });
+    });
+
+    it('ends player sockets when their gameplay state is disconnect', () => {
+      const player = new Player(new Socket());
+      player.gameplayState = PlayerGameplayState.DISCONNECT;
+      sinon.stub(player._socket, 'end');
+      game.addPlayer(player);
+      game.shutdown();
+      game.gameLoop();
+      assume(player._socket.end.calledOnce).is.true();
+    });
+
+    it('removes players from the game when their game state is disconnect', () => {
+      const player = new Player(new Socket());
+      player.gameplayState = PlayerGameplayState.DISCONNECT;
+      sinon.stub(player._socket, 'end');
+      game.addPlayer(player);
+      game.shutdown();
+      game.gameLoop();
+      assume(game.players).is.empty();
     });
   });
 
