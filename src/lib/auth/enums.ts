@@ -4,6 +4,7 @@
 export enum PlayerLoginState {
   USERNAME,
   PASSWORD,
+  LOGIN_CONFLICT,
   CREATION,
   LOGGED_IN
 }

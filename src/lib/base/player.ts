@@ -175,7 +175,8 @@ export default class Player extends Living {
   /**
    * Disconnect the player from the game
    */
-  async disconnect(): Promise<void> {
-    await this._socket.end();
+  async disconnect(final = false): Promise<void> {
+    if (!final) this.gameplayState = PlayerGameplayState.DISCONNECT;
+    else await this._socket.end();
   }
 }

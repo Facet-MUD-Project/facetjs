@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { GameState } from './base/enums';
+import { GameState, PlayerGameplayState } from './base/enums';
 import Player from './base/player';
+import { PlayerLoginState } from './auth/enums';
 
 /**
  * A class representing the game loop and player queue
@@ -31,6 +32,16 @@ export default class Game {
     return this;
   }
 
+  getPlayer(username: string): Player | undefined {
+    return (this.players.filter(
+      p => p.loginState === PlayerLoginState.LOGGED_IN && p.username === username
+    ))[0];
+  }
+
+  playerLoggedIn(player: Player): boolean {
+    return this.getPlayer(player.username) !== undefined;
+  }
+
   get players(): Array<Player> { return this._players; }
 
   async gameLoop(): Promise<void> {
@@ -38,6 +49,10 @@ export default class Game {
       player.inputBuffer.forEach(
         (msg) => player.inputHandler.handleInput(player, msg));
       player.flushOutput();
+      if (player.gameplayState === PlayerGameplayState.DISCONNECT) {
+        player.disconnect(true);
+        this.removePlayer(player);
+      }
     });
     if (this._state === GameState.RUNNING)
       setTimeout(() => this.gameLoop());

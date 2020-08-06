@@ -2,9 +2,11 @@
 
 import assume from 'assume';
 import Game from '../../src/lib/game';
-import { GameState } from '../../src/lib/base/enums';
+import { GameState, PlayerGameplayState } from '../../src/lib/base/enums';
 import sinon from 'sinon';
 import Player from '../../src/lib/base/player';
+import { PlayerLoginState } from '../../src/lib/auth/enums';
+import { Socket } from 'net';
 
 describe('Game', () => {
   let game: Game;
@@ -112,6 +114,26 @@ describe('Game', () => {
         assume(handler.called).is.true();
       });
     });
+
+    it('ends player sockets when their gameplay state is disconnect', () => {
+      const player = new Player(new Socket());
+      player.gameplayState = PlayerGameplayState.DISCONNECT;
+      sinon.stub(player._socket, 'end');
+      game.addPlayer(player);
+      game.shutdown();
+      game.gameLoop();
+      assume(player._socket.end.calledOnce).is.true();
+    });
+
+    it('removes players from the game when their game state is disconnect', () => {
+      const player = new Player(new Socket());
+      player.gameplayState = PlayerGameplayState.DISCONNECT;
+      sinon.stub(player._socket, 'end');
+      game.addPlayer(player);
+      game.shutdown();
+      game.gameLoop();
+      assume(game.players).is.empty();
+    });
   });
 
   it('adds to the player list when addPlayer is called', () => {
@@ -141,6 +163,41 @@ describe('Game', () => {
       game.addPlayer(new Player());
       game.removePlayer(new Player());
       assume(game.players).has.length(1);
+    });
+  });
+
+  describe('playerLoggedIn', () => {
+    let player1: Player, player2: Player;
+    beforeEach(() => {
+      player1 = new Player();
+      player2 = new Player();
+      player1.username = 'ford_prefect';
+      player1.loginState = PlayerLoginState.LOGGED_IN;
+      player2.username = 'ford_prefect';
+      player1.loginState = PlayerLoginState.LOGGED_IN;
+    });
+
+    it('returns true when the player is already connected', () => {
+      game.addPlayer(player1);
+      assume(game.playerLoggedIn(player2)).is.true();
+    });
+
+    it('returns false when the player is not yet connected', () => {
+      assume(game.playerLoggedIn(player1)).is.false();
+    });
+  });
+
+  describe('getPlayer', () => {
+    it('returns the requested player', () => {
+      const player = new Player();
+      player.username = 'ford_prefect';
+      player.loginState = PlayerLoginState.LOGGED_IN;
+      game.addPlayer(player);
+      assume(game.getPlayer('ford_prefect')).equals(player);
+    });
+
+    it('returns undefined when the player is not found', () => {
+      assume(game.getPlayer('ford_prefect')).equals(undefined);
     });
   });
 });
