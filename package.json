@@ -37,7 +37,7 @@
     "eslint": "^6.8.0",
     "eslint-config-godaddy-typescript": "^1.0.1",
     "eslint-plugin-json": "^2.1.2",
-    "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-mocha": "^6.3.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-tsdoc": "^0.2.5",
     "make-promises-safe": "^5.1.0",
