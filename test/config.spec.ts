@@ -2,19 +2,19 @@ import assume from 'assume';
 import mockedEnv from 'mocked-env';
 import Config from '../src/config';
 
-describe('Config', () => {
+describe('Config', function () {
   let config: Config;
 
-  before(() => {
+  before(function () {
     config = Config.getInstance();
   });
 
-  it('is a singleton', () => {
+  it('is a singleton', function () {
     const config2 = Config.getInstance();
     assume(config).equals(config2);
   });
 
-  it('loads environment variables on loadConfig', () => {
+  it('loads environment variables on loadConfig', function () {
     const restore = mockedEnv({
       FACET_MUD_ADDRESS: '42.42.42.42',
       FACET_MUD_PORT: '4242'

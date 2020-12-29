@@ -108,6 +108,10 @@ export default class Player extends Living {
     this._playerData.password = makePassword(password);
   }
 
+  get password(): string {
+    return this._playerData.password as string;
+  }
+
   /**
    * Send some data to the player
    * @param data - What to send to the player

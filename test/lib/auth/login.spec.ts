@@ -14,10 +14,10 @@ import Game from '../../../src/lib/game';
 import { PlayerLoginState } from '../../../src/lib/auth/enums';
 import { PlayerGameplayState } from '../../../src/lib/base/enums';
 
-describe('Login', () => {
+describe('Login', function () {
   let config: Config, game: Game, logind: Login, player: Player, restore;
 
-  before(() => {
+  before(function () {
     restore = mockedEnv({
       FACET_SAVE_DIR: './test/fixtures/save',
       FACET_PLAYER_SAVE_DIR: './test/fixtures/save/players'
@@ -29,23 +29,23 @@ describe('Login', () => {
     sinon.stub(console, 'error');
   });
 
-  after(() => {
+  after(function () {
     restore();
     console.debug.restore();
     console.error.restore();
   });
 
-  beforeEach(() => {
+  beforeEach(function () {
     player = new Player();
   });
 
-  it('is a singleton', () => {
+  it('is a singleton', function () {
     const logind2 = Login.getInstance();
     assume(logind).equals(logind2);
   });
 
-  describe('handleInput', () => {
-    beforeEach(() => {
+  describe('handleInput', function () {
+    beforeEach(function () {
       player = new Player(new TelnetSocket(new Socket()));
       sinon.stub(player._socket, 'will').get(() => { return { echo: sinon.stub() }; });
       sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
@@ -55,18 +55,18 @@ describe('Login', () => {
       sinon.stub(player, 'disconnect');
     });
 
-    afterEach(() => {
+    afterEach(function () {
       passwords.checkPassword.restore();
       passwords.makePassword.restore();
     });
 
-    it("sets a player's username first, if not set", () => {
+    it("sets a player's username first, if not set", function () {
       sinon.stub(player, 'exists');
       logind.handleInput(player, 'ford_prefect');
       assume(player.username).equals('ford_prefect');
     });
 
-    it('asks the user to set a password if they are new', () => {
+    it('asks the user to set a password if they are new', function () {
       sinon.stub(player, 'exists');
       logind.handleInput(player, 'ford_prefect');
       assume(
@@ -76,7 +76,7 @@ describe('Login', () => {
       ).is.true();
     });
 
-    it('greets existing players and asks for a password', () => {
+    it('greets existing players and asks for a password', function () {
       sinon.stub(player, 'exists').returns(true);
       logind.handleInput(player, 'ford_prefect');
       assume(
@@ -86,13 +86,13 @@ describe('Login', () => {
       ).is.true();
     });
 
-    it("checks the user's password if they exist", () => {
+    it("checks the user's password if they exist", function () {
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(passwords.checkPassword.calledOnce).is.true();
     });
 
-    it('welcomes the player if their password is correct', () => {
+    it('welcomes the player if their password is correct', function () {
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       assume(
@@ -102,7 +102,7 @@ describe('Login', () => {
       ).is.true();
     });
 
-    it('re-asks for a password if it was incorrect', () => {
+    it('re-asks for a password if it was incorrect', function () {
       passwords.checkPassword.returns(false);
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
@@ -113,7 +113,7 @@ describe('Login', () => {
       );
     });
 
-    it("asks the player if the want to take over the connection if they're already connected", () => {
+    it("asks the player if the want to take over the connection if they're already connected", function () {
       const player2 = new Player();
       game = Game.getInstance();
       player2.username = 'zaphod';
@@ -126,7 +126,7 @@ describe('Login', () => {
       game.removePlayer(player2);
     });
 
-    it('disconnects the player if they decide not to take over their connection', () => {
+    it('disconnects the player if they decide not to take over their connection', function () {
       const player2 = new Player();
       game = Game.getInstance();
       player2.username = 'zaphod';
@@ -139,7 +139,7 @@ describe('Login', () => {
       game.removePlayer(player2);
     });
 
-    it('logs the player in if they decide to take over their connection', () => {
+    it('logs the player in if they decide to take over their connection', function () {
       const player2 = new Player();
       game = Game.getInstance();
       player2.username = 'zaphod';
@@ -154,7 +154,7 @@ describe('Login', () => {
       game.removePlayer(player2);
     });
 
-    it('logs the other player out if they decide to take over their connection', () => {
+    it('logs the other player out if they decide to take over their connection', function () {
       const player2 = new Player();
       game = Game.getInstance();
       player2.username = 'zaphod';
@@ -170,7 +170,7 @@ describe('Login', () => {
       game.removePlayer(player2);
     });
 
-    it('asks the player to try again when they respond nonsense to a connection conflict', () => {
+    it('asks the player to try again when they respond nonsense to a connection conflict', function () {
       const player2 = new Player();
       game = Game.getInstance();
       player2.username = 'zaphod';

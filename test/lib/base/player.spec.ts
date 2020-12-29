@@ -12,10 +12,10 @@ import { ObjectType, PlayerGameplayState } from '../../../src/lib/base/enums';
 import Player from '../../../src/lib/base/player';
 import { PlayerLoginState } from '../../../src/lib/auth/enums';
 
-describe('Player', () => {
+describe('Player', function () {
   let player: Player, restore;
 
-  before(() => {
+  before(function () {
     restore = mockedEnv({
       FACET_SAVE_DIR: './test/fixtures/save',
       FACET_PLAYER_SAVE_DIR: './test/fixtures/save/players'
@@ -24,31 +24,31 @@ describe('Player', () => {
     sinon.stub(console, 'error');
   });
 
-  beforeEach(() => {
+  beforeEach(function () {
     player = new Player(new TelnetSocket(new Socket()));
   });
 
-  after(() => {
+  after(function () {
     restore();
     console.debug.restore();
     console.error.restore();
   });
 
-  it('has an object type of player', () => {
+  it('has an object type of player', function () {
     assume(player._objectType).equals(ObjectType.PLAYER);
   });
-  it('buffers output when sending data', () => {
+  it('buffers output when sending data', function () {
     player.sendData('foo!');
     assume(player._outputBuffer).has.length(1);
     assume(player._outputBuffer).contains('foo!');
   });
 
-  it("sets the player's gameplay state to disconnect on disconnect", () => {
+  it("sets the player's gameplay state to disconnect on disconnect", function () {
     player.disconnect();
     assume(player.gameplayState).equals(PlayerGameplayState.DISCONNECT);
   });
 
-  it('empties the input buffer when retrieved', () => {
+  it('empties the input buffer when retrieved', function () {
     player._inputBuffer = ['foo!'];
     const buffer = player.inputBuffer;
     assume(buffer).has.length(1);
@@ -56,14 +56,14 @@ describe('Player', () => {
     assume(player.inputBuffer).is.empty();
   });
 
-  it('buffers input when receiving data', () => {
+  it('buffers input when receiving data', function () {
     player.receiveData('foo!');
     const buffer = player.inputBuffer;
     assume(buffer).has.length(1);
     assume(buffer).contains('foo!');
   });
 
-  it('sends all output buffer items when flushed', () => {
+  it('sends all output buffer items when flushed', function () {
     player.sendData('foo!');
     player.sendData('bar!');
     player.sendData('blah?');
@@ -75,80 +75,80 @@ describe('Player', () => {
     assume(player._socket.write.thirdCall.args[0]).equals('blah?');
   });
 
-  it('toString returns the display name when available', () => {
+  it('toString returns the display name when available', function () {
     player._playerData = { display_name: 'Ford Prefect' };
     assume(player.toString()).equals('Ford Prefect');
   });
 
-  it('toString returns the username when the display name is not available', () => {
+  it('toString returns the username when the display name is not available', function () {
     player.username = 'ford_prefect';
     assume(player.toString()).equals('ford_prefect');
   });
 
-  it('is not considered logged in by default', () => {
+  it('is not considered logged in by default', function () {
     assume(player.loggedIn).is.false();
   });
 
-  it('can find existing players', () => {
+  it('can find existing players', function () {
     player.username = 'zaphod';
     assume(player.exists()).is.true();
   });
 
-  it('does not find non-existing players', () => {
+  it('does not find non-existing players', function () {
     player.username = 'ford';
     assume(player.exists()).is.false();
   });
 
-  it('does not find users when save file is not a file', () => {
+  it('does not find users when save file is not a file', function () {
     player.username = 'trillian';
     assume(player.exists()).is.false();
   });
 
-  it('can load save files', () => {
+  it('can load save files', function () {
     player.username = 'zaphod';
     const loaded = player.loadData().playerData;
     const assumed = { username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42 };
     assume(loaded).eqls(assumed);
   });
 
-  it('is not logged in by default', () => {
+  it('is not logged in by default', function () {
     assume(player.loggedIn).is.false();
   });
 
-  it('is logged in when gameplay state is playing', () => {
+  it('is logged in when gameplay state is playing', function () {
     player.gameplayState = PlayerGameplayState.PLAYING;
     assume(player.loggedIn).is.true();
   });
 
-  it('is not logged in without a password', () => {
+  it('is not logged in without a password', function () {
     player.username = 'ford_prefect';
     assume(player.loggedIn).is.false();
   });
 
-  describe('inputHandler', () => {
-    it('sends input to the login handler by default', () => {
+  describe('inputHandler', function () {
+    it('sends input to the login handler by default', function () {
       assume(player.inputHandler).equals(Login.getInstance());
     });
 
-    it('sends input to the player creation daemon if their gameplay state is creation', () => {
+    it('sends input to the player creation daemon if their gameplay state is creation', function () {
       player.gameplayState = PlayerGameplayState.CREATION;
       assume(player.inputHandler).equals(PlayerCreation.getInstance());
     });
   });
 
-  describe('login state', () => {
-    it('is username by default', () => {
+  describe('login state', function () {
+    it('is username by default', function () {
       assume(player.loginState).equals(PlayerLoginState.USERNAME);
     });
   });
 
-  describe('gameplay state', () => {
-    it('is login by default', () => {
+  describe('gameplay state', function () {
+    it('is login by default', function () {
       assume(player.gameplayState).equals(PlayerGameplayState.LOGIN);
     });
   });
 
-  it("cannot have the username set once it's already been set", () => {
+  it("cannot have the username set once it's already been set", function () {
     player.username = 'ford_prefect';
     assume(() => { player.username = 'zaphod_beeblebrox'; }).throws(Error);
   });
