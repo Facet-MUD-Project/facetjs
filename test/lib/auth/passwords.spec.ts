@@ -3,7 +3,7 @@ import { makePassword, checkPassword } from '../../../src/lib/auth/passwords';
 import assume from 'assume';
 import mockedEnv from 'mocked-env';
 
-describe('Passwords', () => {
+describe('Passwords', function () {
   let config: Config, restore;
   /**
    * This is the result of a call to pbkdf2Sync with:
@@ -24,7 +24,7 @@ describe('Passwords', () => {
      */
     configPassword = 'e03adccfbb7e566092830e1a9973848a1cdd10acc50948d48677a6572c86f35e8fefe9b4a586b6d17ef15c4cfcfcd6d357bac1e844d95f4807c05b8e6e6f43c0';
 
-  before(() => {
+  before(function () {
     restore = mockedEnv({
       AUTH_HASH_ITERATIONS: '100000',
       SECRET_KEY: 'foobar'
@@ -33,12 +33,12 @@ describe('Passwords', () => {
     config.loadConfig();
   });
 
-  it('are generated with specified salt', () => {
+  it('are generated with specified salt', function () {
     const actual = makePassword('super_secret_password', 'this_is_my_salt');
     assume(actual).equals(saltedPassword);
   });
 
-  it('are checked against the specified salt', () => {
+  it('are checked against the specified salt', function () {
     assume(
       checkPassword(
         'super_secret_password', saltedPassword, 'this_is_my_salt'
@@ -46,16 +46,16 @@ describe('Passwords', () => {
     ).is.true();
   });
 
-  it('are generated with the configured salt if not specified', () => {
+  it('are generated with the configured salt if not specified', function () {
     const actual = makePassword('super_secret_password');
     assume(actual).equals(configPassword);
   });
 
-  it('are checked against the configured salt if not specified', () => {
+  it('are checked against the configured salt if not specified', function () {
     assume(checkPassword('super_secret_password', configPassword)).is.true();
   });
 
-  after(() => {
+  after(function () {
     restore();
   });
 });

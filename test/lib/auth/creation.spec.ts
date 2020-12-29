@@ -11,11 +11,11 @@ import { PlayerGameplayState } from '../../../src/lib/base/enums';
 import { PlayerCreationState, PlayerLoginState } from '../../../src/lib/auth/enums';
 import * as passwords from '../../../src/lib/auth/passwords';
 
-describe('Player Creation', () => {
+describe('Player Creation', function () {
   let creation: PlayerCreation, player: Player;
   const goodPassword = 'Dnxq2_2!', badPassword = 'foo';
 
-  before(() => {
+  before(function () {
     creation = PlayerCreation.getInstance();
     sinon.stub(console, 'debug');
     sinon.stub(console, 'error');
@@ -23,14 +23,14 @@ describe('Player Creation', () => {
     sinon.stub(passwords, 'makePassword');
   });
 
-  after(() => {
+  after(function () {
     console.debug.restore();
     console.error.restore();
     passwords.checkPassword.restore();
     passwords.makePassword.restore();
   });
 
-  beforeEach(() => {
+  beforeEach(function () {
     player = new Player(new TelnetSocket(new Socket()));
     player.username = 'zaphod_beeblebrox';
     player.gameplayState = PlayerGameplayState.CREATION;
@@ -40,13 +40,13 @@ describe('Player Creation', () => {
     sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
   });
 
-  it('is a singleton', () => {
+  it('is a singleton', function () {
     const creation2 = PlayerCreation.getInstance();
     assume(creation).equals(creation2);
   });
 
-  describe('password input', () => {
-    it('asks the player to verify their password', () => {
+  describe('password input', function () {
+    it('asks the player to verify their password', function () {
       creation.handleInput(player, goodPassword);
       assume(
         player.sendData.firstCall.calledWithExactly(
@@ -55,12 +55,12 @@ describe('Player Creation', () => {
       ).is.true();
     });
 
-    it('bumps the player to the verify password step', () => {
+    it('bumps the player to the verify password step', function () {
       creation.handleInput(player, goodPassword);
       assume(player.creationState).equals(PlayerCreationState.PASSWORD_VERIFY);
     });
 
-    it('rejects short passwords', () => {
+    it('rejects short passwords', function () {
       creation.handleInput(player, badPassword);
       assume(
         player.sendData.firstCall.calledWithExactly(
@@ -69,14 +69,14 @@ describe('Player Creation', () => {
       ).is.true();
     });
 
-    it('keeps the player at password input if the password was bad', () => {
+    it('keeps the player at password input if the password was bad', function () {
       creation.handleInput(player, badPassword);
       assume(player.creationState).equals(PlayerCreationState.PASSWORD);
     });
   });
 
-  describe('verify password', () => {
-    it('asks the player for a display name if passwords match', () => {
+  describe('verify password', function () {
+    it('asks the player for a display name if passwords match', function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       assume(
@@ -86,13 +86,13 @@ describe('Player Creation', () => {
       ).is.true();
     });
 
-    it('bumps the player to the display name step', () => {
+    it('bumps the player to the display name step', function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       assume(player.creationState).equals(PlayerCreationState.DISPLAY_NAME);
     });
 
-    it('rejects non-matching passwords', () => {
+    it('rejects non-matching passwords', function () {
       passwords.checkPassword.returns(false);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, badPassword);
@@ -104,7 +104,7 @@ describe('Player Creation', () => {
       passwords.checkPassword.returns(true);
     });
 
-    it("resets the player to password input if the passwords didn't match", () => {
+    it("resets the player to password input if the passwords didn't match", function () {
       passwords.checkPassword.returns(false);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, badPassword);
@@ -113,8 +113,8 @@ describe('Player Creation', () => {
     });
   });
 
-  describe('display name', () => {
-    it("confirms the player's display name", () => {
+  describe('display name', function () {
+    it("confirms the player's display name", function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, 'Zaphod Beeblebrox');
@@ -123,14 +123,14 @@ describe('Player Creation', () => {
       ));
     });
 
-    it("sets the player's display name as specified", () => {
+    it("sets the player's display name as specified", function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, 'Zaphod Beeblebrox');
       assume(player.displayName).equals('Zaphod Beeblebrox');
     });
 
-    it("users the player's username by default", () => {
+    it("users the player's username by default", function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, '');
@@ -138,23 +138,23 @@ describe('Player Creation', () => {
     });
   });
 
-  describe('finalizing', () => {
-    it('welcomes the player', () => {
+  describe('finalizing', function () {
+    it('welcomes the player', function () {
       creation.finishCreation(player);
       assume(player.sendData.firstCall.calledWithExactly('Enjoy the game!\r\n'));
     });
 
-    it('sets the player to logged in', () => {
+    it('sets the player to logged in', function () {
       creation.finishCreation(player);
       assume(player.loginState).equals(PlayerLoginState.LOGGED_IN);
     });
 
-    it('sets the player to done with creation', () => {
+    it('sets the player to done with creation', function () {
       creation.finishCreation(player);
       assume(player.creationState).equals(PlayerCreationState.DONE);
     });
 
-    it('sets the player to playing', () => {
+    it('sets the player to playing', function () {
       creation.finishCreation(player);
       assume(player.gameplayState).equals(PlayerGameplayState.PLAYING);
     });
