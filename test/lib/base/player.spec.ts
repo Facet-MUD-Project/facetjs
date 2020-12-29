@@ -1,8 +1,11 @@
 // @ts-nocheck
 
 import assume from 'assume';
+import * as fs from 'fs';
+import mock from 'mock-fs';
 import mockedEnv from 'mocked-env';
 import { Socket } from 'net';
+import * as path from 'path';
 import sinon from 'sinon';
 import { TelnetSocket } from 'telnet-socket';
 
@@ -108,6 +111,26 @@ describe('Player', function () {
       const loaded = player.loadData().playerData;
       const assumed = { username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42 };
       assume(loaded).eqls(assumed);
+    });
+  });
+
+  describe('save', function () {
+    it("creates savePath's directory if it doesn't exist", function () {
+      mock();
+      player.username = 'ford_prefect';
+      player.save();
+      assume(fs.existsSync(path.dirname(player.savePath))).is.true();
+      mock.restore();
+    });
+
+    it("writes the player's data to their savePath", function () {
+      mock();
+      player.username = 'ford_prefect';
+      player.save();
+      assume(
+        fs.readFileSync(player.savePath).toString()
+      ).equals('username = "ford_prefect"\n');
+      mock.restore();
     });
   });
 
