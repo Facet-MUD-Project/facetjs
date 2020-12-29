@@ -43,7 +43,7 @@ export default class Player extends Living {
     this.setEcho(true);
     this.loginState = PlayerLoginState.LOGGED_IN;
     this.gameplayState = PlayerGameplayState.PLAYING;
-    this._playerData.last_login_time = new Date();
+    this._playerData.last_login_time = new Date().getTime();
     this.save();
     return this;
   }
