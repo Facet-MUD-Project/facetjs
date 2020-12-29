@@ -36,6 +36,7 @@ describe('Player Creation', function () {
     player.gameplayState = PlayerGameplayState.CREATION;
     sinon.stub(player, 'sendData');
     sinon.stub(player, 'save');
+    sinon.stub(player, 'login');
     sinon.stub(player._socket, 'will').get(() => { return { echo: sinon.stub() }; });
     sinon.stub(player._socket, 'wont').get(() => { return { echo: sinon.stub() }; });
   });
@@ -130,7 +131,7 @@ describe('Player Creation', function () {
       assume(player.displayName).equals('Zaphod Beeblebrox');
     });
 
-    it("users the player's username by default", function () {
+    it("uses the player's username by default", function () {
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, goodPassword);
       creation.handleInput(player, '');
@@ -144,9 +145,9 @@ describe('Player Creation', function () {
       assume(player.sendData.firstCall.calledWithExactly('Enjoy the game!\r\n'));
     });
 
-    it('sets the player to logged in', function () {
+    it('logs the player in', function () {
       creation.finishCreation(player);
-      assume(player.loginState).equals(PlayerLoginState.LOGGED_IN);
+      assume(player.login.calledOnce).is.true();
     });
 
     it('sets the player to done with creation', function () {
@@ -154,9 +155,5 @@ describe('Player Creation', function () {
       assume(player.creationState).equals(PlayerCreationState.DONE);
     });
 
-    it('sets the player to playing', function () {
-      creation.finishCreation(player);
-      assume(player.gameplayState).equals(PlayerGameplayState.PLAYING);
-    });
   });
 });
