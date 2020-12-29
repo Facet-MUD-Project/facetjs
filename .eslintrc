@@ -33,6 +33,10 @@
     "no-undefined": "off",
     "tsdoc/syntax": "warn",
     "valid-jsdoc": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": [
+      "error"
+    ]
   },
   "overrides": [
     {
