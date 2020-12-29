@@ -37,92 +37,90 @@ describe('Player', function () {
   it('has an object type of player', function () {
     assume(player._objectType).equals(ObjectType.PLAYER);
   });
-  it('buffers output when sending data', function () {
-    player.sendData('foo!');
-    assume(player._outputBuffer).has.length(1);
-    assume(player._outputBuffer).contains('foo!');
+
+  describe('input', function () {
+    it('buffer is emptied when retrieved', function () {
+      player._inputBuffer = ['foo!'];
+      const buffer = player.inputBuffer;
+      assume(buffer).has.length(1);
+      assume(buffer).contains('foo!');
+      assume(player.inputBuffer).is.empty();
+    });
+
+    it('is buffered when receiving data', function () {
+      player.receiveData('foo!');
+      const buffer = player.inputBuffer;
+      assume(buffer).has.length(1);
+      assume(buffer).contains('foo!');
+    });
   });
 
-  it("sets the player's gameplay state to disconnect on disconnect", function () {
-    player.disconnect();
-    assume(player.gameplayState).equals(PlayerGameplayState.DISCONNECT);
+  describe('output', function () {
+    it('is buffered when sending data', function () {
+      player.sendData('foo!');
+      assume(player._outputBuffer).has.length(1);
+      assume(player._outputBuffer).contains('foo!');
+    });
+
+    it('buffer is all sent when flushed', function () {
+      player.sendData('foo!');
+      player.sendData('bar!');
+      player.sendData('blah?');
+      sinon.stub(player._socket, 'write');
+      player.flushOutput();
+      assume(player._socket.write.callCount).equals(3);
+      assume(player._socket.write.firstCall.args[0]).equals('foo!');
+      assume(player._socket.write.secondCall.args[0]).equals('bar!');
+      assume(player._socket.write.thirdCall.args[0]).equals('blah?');
+    });
   });
 
-  it('empties the input buffer when retrieved', function () {
-    player._inputBuffer = ['foo!'];
-    const buffer = player.inputBuffer;
-    assume(buffer).has.length(1);
-    assume(buffer).contains('foo!');
-    assume(player.inputBuffer).is.empty();
+  describe('toString', function () {
+    it('returns the display name when available', function () {
+      player._playerData = { display_name: 'Ford Prefect' };
+      assume(player.toString()).equals('Ford Prefect');
+    });
+
+    it('returns the username when the display name is not available', function () {
+      player.username = 'ford_prefect';
+      assume(player.toString()).equals('ford_prefect');
+    });
   });
 
-  it('buffers input when receiving data', function () {
-    player.receiveData('foo!');
-    const buffer = player.inputBuffer;
-    assume(buffer).has.length(1);
-    assume(buffer).contains('foo!');
+  describe('loadData', function () {
+    it('can find existing players', function () {
+      player.username = 'zaphod';
+      assume(player.exists()).is.true();
+    });
+
+    it('does not find non-existing players', function () {
+      player.username = 'ford';
+      assume(player.exists()).is.false();
+    });
+
+    it('does not find users when save file is not a file', function () {
+      player.username = 'trillian';
+      assume(player.exists()).is.false();
+    });
+
+    it('can load save files', function () {
+      player.username = 'zaphod';
+      const loaded = player.loadData().playerData;
+      const assumed = { username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42 };
+      assume(loaded).eqls(assumed);
+    });
   });
 
-  it('sends all output buffer items when flushed', function () {
-    player.sendData('foo!');
-    player.sendData('bar!');
-    player.sendData('blah?');
-    sinon.stub(player._socket, 'write');
-    player.flushOutput();
-    assume(player._socket.write.callCount).equals(3);
-    assume(player._socket.write.firstCall.args[0]).equals('foo!');
-    assume(player._socket.write.secondCall.args[0]).equals('bar!');
-    assume(player._socket.write.thirdCall.args[0]).equals('blah?');
-  });
+  describe('loggedIn', function () {
+    it('is false by default', function () {
+      assume(player.loggedIn).is.false();
+    });
 
-  it('toString returns the display name when available', function () {
-    player._playerData = { display_name: 'Ford Prefect' };
-    assume(player.toString()).equals('Ford Prefect');
-  });
+    it('is true when gameplay state is playing', function () {
+      player.gameplayState = PlayerGameplayState.PLAYING;
+      assume(player.loggedIn).is.true();
+    });
 
-  it('toString returns the username when the display name is not available', function () {
-    player.username = 'ford_prefect';
-    assume(player.toString()).equals('ford_prefect');
-  });
-
-  it('is not considered logged in by default', function () {
-    assume(player.loggedIn).is.false();
-  });
-
-  it('can find existing players', function () {
-    player.username = 'zaphod';
-    assume(player.exists()).is.true();
-  });
-
-  it('does not find non-existing players', function () {
-    player.username = 'ford';
-    assume(player.exists()).is.false();
-  });
-
-  it('does not find users when save file is not a file', function () {
-    player.username = 'trillian';
-    assume(player.exists()).is.false();
-  });
-
-  it('can load save files', function () {
-    player.username = 'zaphod';
-    const loaded = player.loadData().playerData;
-    const assumed = { username: 'zaphod', display_name: 'Zaphod Beeblebrox', level: 42 };
-    assume(loaded).eqls(assumed);
-  });
-
-  it('is not logged in by default', function () {
-    assume(player.loggedIn).is.false();
-  });
-
-  it('is logged in when gameplay state is playing', function () {
-    player.gameplayState = PlayerGameplayState.PLAYING;
-    assume(player.loggedIn).is.true();
-  });
-
-  it('is not logged in without a password', function () {
-    player.username = 'ford_prefect';
-    assume(player.loggedIn).is.false();
   });
 
   describe('inputHandler', function () {
@@ -145,6 +143,11 @@ describe('Player', function () {
   describe('gameplay state', function () {
     it('is login by default', function () {
       assume(player.gameplayState).equals(PlayerGameplayState.LOGIN);
+    });
+
+    it('is set to disconnect on disconnect', function () {
+      player.disconnect();
+      assume(player.gameplayState).equals(PlayerGameplayState.DISCONNECT);
     });
   });
 
