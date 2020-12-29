@@ -8,7 +8,7 @@ import { TelnetSocket } from 'telnet-socket';
 import PlayerCreation from '../../../src/lib/auth/creation';
 import Player from '../../../src/lib/base/player';
 import { PlayerGameplayState } from '../../../src/lib/base/enums';
-import { PlayerCreationState, PlayerLoginState } from '../../../src/lib/auth/enums';
+import { PlayerCreationState } from '../../../src/lib/auth/enums';
 import * as passwords from '../../../src/lib/auth/passwords';
 
 describe('Player Creation', function () {
