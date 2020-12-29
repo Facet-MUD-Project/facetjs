@@ -39,6 +39,14 @@ export default class Player extends Living {
     return this.gameplayState === PlayerGameplayState.PLAYING;
   }
 
+  login(): Player {
+    this.setEcho(true);
+    this.loginState = PlayerLoginState.LOGGED_IN;
+    this.gameplayState = PlayerGameplayState.PLAYING;
+    this._playerData.last_login_time = new Date();
+    return this;
+  }
+
   get inputHandler(): InputHandler {
     switch (this.gameplayState) {
       case PlayerGameplayState.LOGIN:
