@@ -57,9 +57,7 @@ export default class Login implements InputHandler {
       const game = Game.getInstance();
       if (!game.playerLoggedIn(player)) {
         player.sendData(`\r\nWelcome, ${player}!\r\n`);
-        player.setEcho(true);
-        player.loginState = PlayerLoginState.LOGGED_IN;
-        player.gameplayState = PlayerGameplayState.PLAYING;
+        player.login();
       } else {
         player.loginState = PlayerLoginState.LOGIN_CONFLICT;
         player.setEcho(true);
@@ -88,8 +86,7 @@ export default class Login implements InputHandler {
         existing.save();
         existing.disconnect();
       }
-      player.loginState = PlayerLoginState.LOGGED_IN;
-      player.gameplayState = PlayerGameplayState.PLAYING;
+      player.login();
     } else {
       player.sendData("Wait, what? I don't understand that.\r\n");
       player.sendData('Would you like to take over the other connection? [y/N] ');
