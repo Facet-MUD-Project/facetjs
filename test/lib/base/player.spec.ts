@@ -41,6 +41,40 @@ describe('Player', function () {
     assume(player._objectType).equals(ObjectType.PLAYER);
   });
 
+  describe('creationTime', function () {
+    it('is undefined by default', function () {
+      assume(player.creationTime).equals(undefined);
+    });
+  });
+
+  describe('login', function () {
+
+    beforeEach(function () {
+      sinon.stub(player, 'save');
+      sinon.stub(player, 'setEcho');
+    });
+
+    it('sets echo to true', function () {
+      player.login();
+      assume(player.setEcho.calledOnceWith(true)).is.true();
+    });
+
+    it('sets login state to logged in', function () {
+      player.login();
+      assume(player.loginState).equals(PlayerLoginState.LOGGED_IN);
+    });
+
+    it('sets gameplay state to playing', function () {
+      player.login();
+      assume(player.gameplayState).equals(PlayerGameplayState.PLAYING);
+    });
+
+    it('sets last login time', function () {
+      player.login();
+      assume(typeof player.playerData.last_login_time).equals('number');
+    });
+  });
+
   describe('input', function () {
     it('buffer is emptied when retrieved', function () {
       player._inputBuffer = ['foo!'];
