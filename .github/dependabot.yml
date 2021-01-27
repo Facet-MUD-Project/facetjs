@@ -11,7 +11,7 @@ updates:
     allow:
       - dependency-type: "direct"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
