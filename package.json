@@ -12,9 +12,11 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "start": "ts-node .",
-    "test": "nyc mocha",
+    "build": "tsc",
     "docs": "typedoc src/",
-    "build": "tsc"
+    "test:mocha": "mocha",
+    "test": "nyc npm run test:mocha",
+    "posttest": "npm run lint"
   },
   "repository": {
     "type": "git",
