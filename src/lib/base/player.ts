@@ -39,6 +39,15 @@ export default class Player extends Living {
     return this.gameplayState === PlayerGameplayState.PLAYING;
   }
 
+  login(): Player {
+    this.setEcho(true);
+    this.loginState = PlayerLoginState.LOGGED_IN;
+    this.gameplayState = PlayerGameplayState.PLAYING;
+    this._playerData.last_login_time = new Date().getTime();
+    this.save();
+    return this;
+  }
+
   get inputHandler(): InputHandler {
     switch (this.gameplayState) {
       case PlayerGameplayState.LOGIN:
@@ -89,14 +98,22 @@ export default class Player extends Living {
   }
 
   get creationState(): PlayerCreationState {
-    if (this._playerData.creationState === undefined) {
-      this._playerData.creationState = PlayerCreationState.PASSWORD;
+    if (this._playerData.creation_state === undefined) {
+      this._playerData.creation_state = PlayerCreationState.PASSWORD;
     }
-    return this._playerData.creationState as number;
+    return this._playerData.creation_state as PlayerCreationState;
   }
 
   set creationState(state: PlayerCreationState) {
-    this._playerData.creationState = state;
+    this._playerData.creation_state = state;
+  }
+
+  get creationTime(): number | undefined {
+    return this._playerData ? this._playerData.creation_time as number : undefined;
+  }
+
+  set creationTime(time: number) {
+    this._playerData.creation_time = time;
   }
 
   get savePath(): string {

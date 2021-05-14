@@ -1,8 +1,7 @@
 import Player from '../base/player';
 import { InputHandler } from '../interfaces';
-import { PlayerCreationState, PlayerLoginState } from './enums';
+import { PlayerCreationState } from './enums';
 import { checkPassword } from './passwords';
-import { PlayerGameplayState } from '../base/enums';
 
 export default class PlayerCreation implements InputHandler {
   private static instance: PlayerCreation;
@@ -66,9 +65,8 @@ export default class PlayerCreation implements InputHandler {
 
   private finishCreation(player: Player): void {
     player.sendData('Enjoy the game!\r\n');
-    player.loginState = PlayerLoginState.LOGGED_IN;
     player.creationState = PlayerCreationState.DONE;
-    player.gameplayState = PlayerGameplayState.PLAYING;
-    player.save();
+    player.creationTime = new Date().getTime();
+    player.login();
   }
 }

@@ -12,7 +12,6 @@ import Login from '../../../src/lib/auth/login';
 import * as passwords from '../../../src/lib/auth/passwords';
 import Game from '../../../src/lib/game';
 import { PlayerLoginState } from '../../../src/lib/auth/enums';
-import { PlayerGameplayState } from '../../../src/lib/base/enums';
 
 describe('Login', function () {
   let config: Config, game: Game, logind: Login, player: Player, restore;
@@ -37,6 +36,8 @@ describe('Login', function () {
 
   beforeEach(function () {
     player = new Player();
+    game = Game.getInstance();
+    game._players = [];
   });
 
   it('is a singleton', function () {
@@ -53,6 +54,8 @@ describe('Login', function () {
       sinon.stub(passwords, 'makePassword');
       sinon.stub(player, 'sendData');
       sinon.stub(player, 'disconnect');
+      sinon.stub(player, 'login');
+      sinon.stub(player, 'save');
     });
 
     afterEach(function () {
@@ -149,8 +152,7 @@ describe('Login', function () {
       logind.handleInput(player, 'zaphod');
       logind.handleInput(player, 'foobar');
       logind.handleInput(player, 'y');
-      assume(player.loggedIn).is.true();
-      assume(player.gameplayState).equals(PlayerGameplayState.PLAYING);
+      assume(player.login.calledOnce).is.true();
       game.removePlayer(player2);
     });
 
