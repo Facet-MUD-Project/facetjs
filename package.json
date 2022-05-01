@@ -30,7 +30,7 @@
   "homepage": "https://gitlab.com/facet-mud-project/facetjs#readme",
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/mocha": "^8.2.0",
+    "@types/mocha": "^9.1.1",
     "@types/mock-fs": "^4.13.0",
     "@types/node": "^16.3.2",
     "@types/sinon": "^10.0.2",
